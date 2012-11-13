@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.faces.model.DataModel;
+
 import org.isima.model.FileInfos;
 import org.primefaces.model.TreeNode;
 import org.primefaces.model.DefaultTreeNode;
@@ -24,7 +26,7 @@ public class FileLister {
 	}
 	
 	static public TreeNode getTree(String path) {
-		
+				
 		final TreeNode root = new DefaultTreeNode("Root", null);		
 
 		DefaultTreeNode childNode = new DefaultTreeNode(new FileInfos(path), root);

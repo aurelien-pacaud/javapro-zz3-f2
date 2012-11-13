@@ -9,7 +9,6 @@ import org.isima.ui.faces.bean.login.LoginManagedBean;
 import org.isima.ui.utils.FileLister;
 import org.primefaces.model.TreeNode;
 
-@ManagedBean
 public class FileTreeBean implements Serializable {
 
 	private static final long serialVersionUID = 1L;
