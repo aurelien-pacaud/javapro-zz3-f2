@@ -10,7 +10,7 @@ public class LoginManagedBean {
 	
 	private final String allowUsername = "admin";
 	private final String allwPassword = "admin";
-	private final String userHome = "/home/aurelien/Cours/JavaPro";
+	private final String userHome = "/home";
 	
 	private String username;
 	private String password;

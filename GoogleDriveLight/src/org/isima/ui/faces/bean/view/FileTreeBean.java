@@ -12,8 +12,10 @@ import org.primefaces.model.TreeNode;
 @ManagedBean
 public class FileTreeBean implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	private TreeNode model;
-	private TreeNode selectedNode;	
+	private TreeNode selectedNode;
 	
 	public FileTreeBean() {
 		

@@ -7,7 +7,9 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:cc="http://java.sun.com/jsf/composite">
+	
 <f:loadBundle basename="org.isima.resources.lang.messages" var="msg"/>
+
 <h:head>
 	<title>Main page</title>
 </h:head>
@@ -23,19 +25,18 @@
 		<p:menubar>  
 			<p:submenu label="File" icon="ui-icon-document">  
 			    <p:submenu label="New" icon="ui-icon-contact">  
-			        <p:menuitem value="File" url="#" />  
-			        <p:menuitem value="Directory" url="#" />  
+			        <p:menuitem value="File" />  
+			        <p:menuitem value="Directory" />  
 			    </p:submenu> 
 			    <p:separator />  
-			    <p:menuitem value="Quit" url="#" />  
+			    <p:menuitem value="Quit" />  
 			</p:submenu>  
 		</p:menubar>
 	</h:form>
 	
-	
-	
 	<p:layout> 
 	
+		<!-- Arbre des fichiers (gauche) -->
 		<p:layoutUnit position="west" size="330" header="#{msg['drive']}" resizable="true">
 		    <h:form id="formTree">
 			   <p:tree value="#{fileTreeBean.model}" var="node" dynamic="true" cache="true" 
@@ -51,9 +52,11 @@
 			</h:form>				
 	    </p:layoutUnit>
 	    
+	    <!-- Détails d'un répertoire (centre) -->
 		<p:layoutUnit position="center">	
 		    <h:form id="formTable">		  
-			    <p:dataTable id="table" var="file" value="#{fileListBean.model}" selection="#{fileListBean.selectedFile}"
+			    <p:dataTable id="table" var="file" value="#{fileListBean.model}" 
+			    			 selection="#{fileListBean.selectedFile}"
 			                 selectionMode="single">		        
 			       			       	
 			        <p:ajax event="rowSelect" listener="#{fileListBean.onRowSelect}" update=":formDetails" />			        
@@ -95,6 +98,7 @@
 					
 	    </p:layoutUnit>
 	    
+	    <!-- Détails d'un fichier (gauche) -->
 	    <p:layoutUnit position="east" size="330" header="#{msg['details']}" resizable="true">
 		    <h:form id="formDetails">
 			   <p:dataTable id="table" var="file" value="#{fileListBean.selectedFile}" rendered="#{fileListBean.selectedFile != null}">
