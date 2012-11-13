@@ -1,11 +1,8 @@
 package org.isima.ui.faces.bean.login;
 
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpSession;
 
-@ManagedBean
 public class LoginManagedBean {
 	
 	private final String allowUsername = "admin";

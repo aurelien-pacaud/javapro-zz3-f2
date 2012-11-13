@@ -12,7 +12,6 @@ import org.isima.ui.utils.FileLister;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.SelectEvent;
 
-@ManagedBean
 public class FileListBean implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
