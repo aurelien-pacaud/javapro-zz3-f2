@@ -8,6 +8,8 @@ import java.util.Map;
 
 public class FileInfos implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	private static Map<String, FileType> types = new HashMap<String, FileInfos.FileType>();
 	
 	static {

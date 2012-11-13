@@ -15,6 +15,8 @@ import org.primefaces.event.SelectEvent;
 @ManagedBean
 public class FileListBean implements Serializable {
 	
+	private static final long serialVersionUID = 1L;
+	
 	private FileInfos selectedFile;
 	private FileDataModel model;
 	private String currentDirectory;
@@ -60,7 +62,7 @@ public class FileListBean implements Serializable {
     }
 	
 	public void onNodeSelect(NodeSelectEvent event) {  
-       
+     
 		FileInfos file = (FileInfos) event.getTreeNode().getData();	
 		setCurrentDirectory(file.getPath());
     }  
