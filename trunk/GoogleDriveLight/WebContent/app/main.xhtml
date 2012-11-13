@@ -11,31 +11,36 @@
 <f:loadBundle basename="org.isima.resources.lang.messages" var="msg"/>
 
 <h:head>
-	<title>Main page</title>
+	<title>Google Drive Light</title>
 </h:head>
 <h:body>
 	
+	<!-- Permet la deconnexion -->
 	<h:form>
 		<p:commandLink id="ajax" actionListener="#{loginManagedBean.logout}" ajax="false">  
         	<h:outputText value="#{loginManagedBean.username}" />  
     	</p:commandLink>
     </h:form>
 	
+	<!-- Barre d'outils (haut) -->
 	<h:form id="menuBar">
 		<p:menubar>  
-			<p:submenu label="File" icon="ui-icon-document">  
-			    <p:submenu label="New" icon="ui-icon-contact">  
-			        <p:menuitem value="File" />  
-			        <p:menuitem value="Directory" />  
+			<p:submenu label="#{msg['labelMenuFile']}" >  
+			    <p:submenu label="#{msg['labelMenuFileNew']}" >  
+			        <p:menuitem value="#{msg['labelMenuFileNewTextFile']}" oncomplete="dlgNewTxtFile.show()" icon="ui-icon-document"/>
+			        <p:menuitem value="#{msg['labelMenuFileNewPresentationFile']}" icon="ui-icon-contact"/>
+			        <p:menuitem value="#{msg['labelMenuFileNewDrawFile']}" icon="ui-icon-image"/>
+			        <p:separator /> 
+			        <p:menuitem value="#{msg['labelMenuFileNewDirectory']}" icon="ui-icon-folder-collapsed"/>  
 			    </p:submenu> 
 			    <p:separator />  
-			    <p:menuitem value="Quit" />  
+			    <p:menuitem value="#{msg['labelMenuFileQuit']}" icon="ui-icon-squaresmall-close"/>  
 			</p:submenu>  
 		</p:menubar>
 	</h:form>
 	
+	<!-- Les éléments suivants sont organisés selon un layout -->
 	<p:layout> 
-	
 		<!-- Arbre des fichiers (gauche) -->
 		<p:layoutUnit position="west" size="330" header="#{msg['drive']}" resizable="true">
 		    <h:form id="formTree">
@@ -122,6 +127,20 @@
 	    </p:layoutUnit>
 	    
 	</p:layout>
+	
+	<!-- Dialog permettant la création d'un nouveau fichier texte -->
+	<p:dialog header="#{msg['labelTypeName']}" widgetVar="dlgNewTxtFile" resizable="false">  
+	
+    <h:form>  
+        <h:panelGrid columns="2" style="margin-bottom:10px">  
+            <h:outputLabel for="firstname" value="#{msg['labelName']}" />  
+            <p:inputText id="firstname" value="#{fileManagedBean.filename}" />  
+        </h:panelGrid>  
+  
+       <p:commandButton id="submitButton" value="#{msg['labelValid']}" action="#{fileManagedBean.createFile}" oncomplete="dlgNewTxtFile.hide();"/>     
+              
+    </h:form>  
+</p:dialog>
 
 </h:body>
 </html>

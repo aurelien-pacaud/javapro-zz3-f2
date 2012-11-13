@@ -47,7 +47,7 @@ public class LoginManagedBean {
 	
 	public String logout() {
 		
-		FacesContext facesContext = FacesContext.getCurrentInstance();
+		//FacesContext facesContext = FacesContext.getCurrentInstance();
 		//HttpSession httpSession = (HttpSession)facesContext.getExternalContext().getSession(false);
 		//httpSession.invalidate();
 				
