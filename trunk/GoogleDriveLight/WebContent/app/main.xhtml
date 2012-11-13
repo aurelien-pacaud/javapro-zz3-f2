@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:cc="http://java.sun.com/jsf/composite">
+<f:loadBundle basename="org.isima.resources.lang.messages" var="msg"/>
+<h:head>
+	<title>Main page</title>
+</h:head>
+<h:body>
+	
+	<h:form>
+		<p:commandLink id="ajax" actionListener="#{loginManagedBean.logout}" ajax="false">  
+        	<h:outputText value="#{loginManagedBean.username}" />  
+    	</p:commandLink>
+    </h:form>
+	
+	<h:form id="menuBar">
+		<p:menubar>  
+			<p:submenu label="File" icon="ui-icon-document">  
+			    <p:submenu label="New" icon="ui-icon-contact">  
+			        <p:menuitem value="File" url="#" />  
+			        <p:menuitem value="Directory" url="#" />  
+			    </p:submenu> 
+			    <p:separator />  
+			    <p:menuitem value="Quit" url="#" />  
+			</p:submenu>  
+		</p:menubar>
+	</h:form>
+	
+	
+	
+	<p:layout> 
+	
+		<p:layoutUnit position="west" size="330" header="#{msg['drive']}" resizable="true">
+		    <h:form id="formTree">
+			   <p:tree value="#{fileTreeBean.model}" var="node" dynamic="true" cache="true" 
+			           id="tree"
+			           selection="#{fileTreeBean.selectedNode}"  			 
+                  	   selectionMode="single" >
+                  	   
+                   <p:ajax event="select" listener="#{fileListBean.onNodeSelect}" update=":formTable, :formDetails" />	   
+			       <p:treeNode>
+			           <h:outputText value="#{node}" id="lblNode"/>
+			       </p:treeNode>
+			   </p:tree>		
+			</h:form>				
+	    </p:layoutUnit>
+	    
+		<p:layoutUnit position="center">	
+		    <h:form id="formTable">		  
+			    <p:dataTable id="table" var="file" value="#{fileListBean.model}" selection="#{fileListBean.selectedFile}"
+			                 selectionMode="single">		        
+			       			       	
+			        <p:ajax event="rowSelect" listener="#{fileListBean.onRowSelect}" update=":formDetails" />			        
+			        
+			        <f:facet name="header">  
+            			#{fileListBean.currentDirectory}  
+        			</f:facet>			        
+			        
+			        <p:column sortBy="#{file.name}">
+			            <f:facet name="header">
+			                    Name
+			            </f:facet>
+			            <h:outputText value="#{file.name}"/>
+			        </p:column>
+			
+			        <p:column sortBy="#{file.type}">
+			            <f:facet name="header">
+			                    Type
+			            </f:facet>
+			            <h:outputText value="#{file.type}" />
+			        </p:column>
+			
+			        <p:column sortBy="#{file.size}">
+			            <f:facet name="header">
+			                    Size
+			            </f:facet>
+			            <h:outputText value="#{file.size}"> <f:convertNumber pattern="#.## Mo" /> </h:outputText>
+			        </p:column>
+			
+			        <p:column>
+			            <f:facet name="header">
+			                    Last Updated
+			            </f:facet>
+			            <h:outputText value="#{file.lastModified}"><f:convertDateTime dateStyle="short" type="both" /> </h:outputText>
+			        </p:column>
+			    </p:dataTable>
+			
+			</h:form>
+					
+	    </p:layoutUnit>
+	    
+	    <p:layoutUnit position="east" size="330" header="#{msg['details']}" resizable="true">
+		    <h:form id="formDetails">
+			   <p:dataTable id="table" var="file" value="#{fileListBean.selectedFile}" rendered="#{fileListBean.selectedFile != null}">
+			        <p:column>
+			            <f:facet name="header">
+			            	File Name
+			            </f:facet>
+			            <h:outputText value="#{file.name}"/>
+			        </p:column>
+			        
+			        <p:column>
+			            <f:facet name="header">
+			            	Size
+			            </f:facet>
+			            <h:outputText value="#{file.size}"/>
+			        </p:column>
+				</p:dataTable>
+				
+				<h:outputText value="#{msg['fileDetails']}" rendered="#{fileListBean.selectedFile == null}"></h:outputText>
+			</h:form>				
+	    </p:layoutUnit>
+	    
+	</p:layout>
+
+</h:body>
+</html>

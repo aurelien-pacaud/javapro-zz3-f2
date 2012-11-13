@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Injector" basedir="." default="package">
+
+  <property name="src.dir"    value="src"/>
+
+  <property name="build.dir"   value="build"/>
+  <property name="classes.dir" value="${build.dir}/classes"/>
+  <property name="jar.dir"     value="${build.dir}/jar"/>
+
+  <target name="init">	     
+    <fail message="No src dir define" unless="src.dir" />
+    <fail message="No build dir define" unless="build.dir" />
+    <fail message="No classes dir define" unless="classes.dir" />
+    <fail message="No jar dir define" unless="jar.dir" />
+  </target>
+
+  <path id="classpath" >
+    <fileset dir="lib/">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
+
+  <target name="clean">
+    <delete dir="${build.dir}"/>
+  </target>
+
+  <target name="compile" depends="clean">
+    <mkdir dir="${classes.dir}"/>
+    <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false" debug="yes">
+      <classpath refid="classpath" />
+    </javac>
+  </target>
+  
+  <target name="package" depends="compile">
+    <mkdir dir="${jar.dir}"/>
+    <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}" >
+      <manifest>
+        <attribute name="Main-Class" value="fr.isima.injector.Injector"/>
+      </manifest>
+    </jar>
+  </target>
+
+</project>
