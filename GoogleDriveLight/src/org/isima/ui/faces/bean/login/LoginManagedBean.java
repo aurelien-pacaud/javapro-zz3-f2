@@ -1,9 +1,13 @@
 package org.isima.ui.faces.bean.login;
 
+import java.io.Serializable;
+
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
-public class LoginManagedBean {
+public class LoginManagedBean implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	
 	private final String allowUsername = "admin";
 	private final String allwPassword = "admin";
