@@ -40,7 +40,8 @@
 	</h:form>
 	
 	<!-- Les éléments suivants sont organisés selon un layout -->
-	<p:layout> 
+	<p:layout>
+	
 		<!-- Arbre des fichiers (gauche) -->
 		<p:layoutUnit position="west" size="330" header="#{msg['drive']}" resizable="true">
 		    <h:form id="formTree">
@@ -129,7 +130,7 @@
 	</p:layout>
 	
 	<!-- Dialog permettant la création d'un nouveau fichier texte -->
-	<p:dialog header="#{msg['labelTypeName']}" widgetVar="dlgNewTxtFile" resizable="false">  
+	<p:dialog header="#{msg['labelTypeName']}" widgetVar="dlgNewTxtFile" resizable="false" modal="true">  
 	
     <h:form>  
         <h:panelGrid columns="2" style="margin-bottom:10px">  

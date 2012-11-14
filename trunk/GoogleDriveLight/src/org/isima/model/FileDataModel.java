@@ -1,5 +1,6 @@
 package org.isima.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,8 +8,10 @@ import javax.faces.model.ListDataModel;
 
 import org.primefaces.model.SelectableDataModel;
 
-public class FileDataModel extends ListDataModel<FileInfos> implements SelectableDataModel<FileInfos> {
+public class FileDataModel extends ListDataModel<FileInfos> implements SelectableDataModel<FileInfos>, Serializable {
 	
+	private static final long serialVersionUID = 1L;
+
 	@Override
 	public FileInfos getRowData(String key) {
 		
@@ -17,7 +20,7 @@ public class FileDataModel extends ListDataModel<FileInfos> implements Selectabl
         for(FileInfos file : files) {  
         	
             if(file.getPath().equals(key))  
-                return file;  
+                return file; 
         }  
           
         return null;

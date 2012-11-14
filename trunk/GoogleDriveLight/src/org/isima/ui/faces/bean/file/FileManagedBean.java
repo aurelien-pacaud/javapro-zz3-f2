@@ -1,5 +1,7 @@
 package org.isima.ui.faces.bean.file;
 
+import java.io.Serializable;
+
 import javax.faces.bean.ManagedBean;
 
 import org.isima.ui.utils.FileOperations;
@@ -8,8 +10,10 @@ import org.isima.ui.utils.FileOperations;
  * Permet la gestion des fichiers (ajout, suppression, ...)
  */
 @ManagedBean
-public class FileManagedBean {
+public class FileManagedBean implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	private String filename;
 	
 	public String getFilename ()

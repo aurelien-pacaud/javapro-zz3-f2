@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.faces.model.DataModel;
-
 import org.isima.model.FileInfos;
 import org.primefaces.model.TreeNode;
 import org.primefaces.model.DefaultTreeNode;

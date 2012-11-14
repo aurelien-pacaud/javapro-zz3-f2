@@ -1,8 +1,6 @@
 package org.isima.ui.faces.bean.view;
 
 import java.io.Serializable;
-
-import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
 
 import org.isima.ui.faces.bean.login.LoginManagedBean;
