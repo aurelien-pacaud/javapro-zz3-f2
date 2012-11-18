@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-	id="WebApp_ID" version="3.0">
+		 xmlns="http://java.sun.com/xml/ns/javaee" 
+		 xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+		 xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+		 id="WebApp_ID" 
+		 version="3.0">
+		 
 	<display-name>GoogleDriveLight</display-name>
 
 	<welcome-file-list>
@@ -33,5 +36,30 @@
 		<param-name>primefaces.THEME</param-name>
 		<param-value>blitzer</param-value>
 	</context-param>
+	
+	<!-- Ajout de la ServletListenerContext - TEST -->
+	<listener>
+	  	<listener-class>
+	  		org.isima.model.ServletContextListenerImpl
+	  	</listener-class>
+  	</listener>
+  	
+  	<servlet>
+        <servlet-name>FileListBean</servlet-name>
+        <servlet-class>org.isima.ui.faces.bean.view.FileListBean</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FileListBean</servlet-name>
+        <url-pattern>/FileListBean</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>FileTreeBean</servlet-name>
+        <servlet-class>org.isima.ui.faces.bean.view.FileTreeBean</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FileTreeBean</servlet-name>
+        <url-pattern>/FileTreeBean</url-pattern>
+    </servlet-mapping>
 
 </web-app>
