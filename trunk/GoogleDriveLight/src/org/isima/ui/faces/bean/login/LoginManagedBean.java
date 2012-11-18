@@ -5,13 +5,13 @@ import java.io.Serializable;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
-public class LoginManagedBean implements Serializable {
+public class LoginManagedBean implements Serializable  {
 	
 	private static final long serialVersionUID = 1L;
 	
 	private final String allowUsername = "admin";
 	private final String allwPassword = "admin";
-	private final String userHome = "/home";
+	//private final String userHome = "/home";
 	
 	private String username;
 	private String password;
@@ -32,9 +32,9 @@ public class LoginManagedBean implements Serializable {
 		this.password = password;
 	}
 	
-	public String getUserHome() {
+	/*public String getUserHome() {
 		return userHome;
-	}	
+	}*/	
 	
 	public String login(){
 		

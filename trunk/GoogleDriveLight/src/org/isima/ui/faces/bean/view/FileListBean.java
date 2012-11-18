@@ -1,16 +1,18 @@
 package org.isima.ui.faces.bean.view;
 
 import java.io.Serializable;
-import javax.faces.context.FacesContext;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 
 import org.isima.model.FileDataModel;
 import org.isima.model.FileInfos;
-import org.isima.ui.faces.bean.login.LoginManagedBean;
 import org.isima.ui.utils.FileLister;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.SelectEvent;
 
-public class FileListBean implements Serializable {
+public class FileListBean extends HttpServlet implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -18,13 +20,18 @@ public class FileListBean implements Serializable {
 	private FileDataModel model;
 	private String currentDirectory;
 	
+    public void init(ServletConfig config) throws ServletException {  
+    	super.init(config);  
+    }     
+	
 	public FileListBean() {
 		
 		model = new FileDataModel();
 		
-		LoginManagedBean user = (LoginManagedBean)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("loginManagedBean");
-		
-		setCurrentDirectory(user.getUserHome());		
+		//LoginManagedBean user = (LoginManagedBean)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("loginManagedBean");
+		String userHome = (String)getServletContext().getAttribute("userHome");
+		System.out.println("debug : userHome = " + userHome);
+		setCurrentDirectory(userHome);
 	}
 	
 	public String getCurrentDirectory() {
