@@ -55,6 +55,7 @@ public class DriveManagedBean implements Serializable {
 		injector.inject(this);
 		
 		model = service.getTree(userHome);
+		dirContent = service.getFiles(currentDirectory);
 	}
 
 	public TreeNode getModel() {

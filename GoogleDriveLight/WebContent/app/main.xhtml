@@ -50,7 +50,7 @@
                   	   
                    <p:ajax event="select" listener="#{driveManagedBean.onNodeSelect}" update=":formTable, :formDetails" />	   
 			       <p:treeNode>
-			           <h:outputText value="#{node}" id="lblNode"/>
+			           <h:graphicImage alt="folder" value="/images/folder.png"/> <h:outputText value=" #{node}" id="lblNode"/>
 			       </p:treeNode>
 			   </p:tree>		
 			</h:form>				
@@ -71,9 +71,9 @@
 			        
 			        <p:column sortBy="#{file.name}">
 			            <f:facet name="header">
-			                    Name
+			            	Name
 			            </f:facet>
-			            <h:outputText value="#{file.name}"/>
+			            <h:graphicImage value="/images/#{file.type.toString().toLowerCase()}.png"/> <h:outputText value=" #{file.name}"/>
 			        </p:column>
 			
 			        <p:column sortBy="#{file.type}">

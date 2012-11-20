@@ -2,6 +2,7 @@ package org.isima.ui.utils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.isima.model.FileInfos;
@@ -12,22 +13,32 @@ public class FileLister {
 
 	static public List<FileInfos> getFiles(String path) {
 		
-		final List<FileInfos> files = new ArrayList<FileInfos>();
-				
-		String [] filesList = new File(path).list();
+		final List<FileInfos> orderingFiles = new ArrayList<FileInfos>();
+		final List<FileInfos> orderingDirectories = new ArrayList<FileInfos>();
 		
-		for (String file : filesList)
-			files.add(new FileInfos(String.format("%s/%s", path, file)));			
-	
+		File[] files = new File(path).listFiles();
+		Arrays.sort(files);
 		
-		return files;
+		for (File file : files) {
+			
+			FileInfos fileInfos = new FileInfos(file.getAbsolutePath());
+			
+			if (!file.isDirectory())
+				orderingFiles.add(fileInfos);
+			else
+				orderingDirectories.add(fileInfos);
+		}
+			
+		orderingDirectories.addAll(orderingFiles);
+		
+		return orderingDirectories;
 	}
 	
 	static public TreeNode getTree(String path) {
 				
 		final TreeNode root = new DefaultTreeNode("Root", null);		
 
-		DefaultTreeNode childNode = new DefaultTreeNode(new FileInfos(path), root);
+		DefaultTreeNode childNode = new DefaultTreeNode(new FileInfos("Mon Drive", path), root);
 		
 		FileLister.buildTree(new FileInfos(path), childNode);		
 	
