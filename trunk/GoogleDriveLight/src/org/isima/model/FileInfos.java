@@ -27,20 +27,28 @@ public class FileInfos implements Serializable {
 	}
 	
 	public enum FileType {
-	    TXT, ARCHIVE, PDF, DIRECTORY, FILE, IMG
+	    TXT, ARCHIVE, PDF, FOLDER, FILE, IMG
 	}	
 	
 	private String path;
+	private String name;
 	private File file;
 	
 	public FileInfos(String path) {	
 		
 		setPath(path);
+		name = file.getName();
+	}
+	
+	public FileInfos(String name, String path) {	
+		
+		this.name = name;
+		setPath(path);
 	}
 	
 	public String getName() {
 		
-		return file.getName();
+		return name;
 	}
 	
 	public void setPath(String path) {
@@ -60,7 +68,7 @@ public class FileInfos implements Serializable {
 				
 		if (file.isDirectory()) {
 			
-			type = FileType.DIRECTORY;
+			type = FileType.FOLDER;
 		}
 		else {
 
@@ -99,12 +107,12 @@ public class FileInfos implements Serializable {
 	
 	public boolean isDirectory() {
 		
-		return (getType() == FileType.DIRECTORY);
+		return (getType() == FileType.FOLDER);
 	}
 	
 	public boolean isFile() {
 		
-		return (getType() != FileType.DIRECTORY);
+		return (getType() != FileType.FOLDER);
 	}
 	
 	public String toString() {
