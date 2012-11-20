@@ -43,23 +43,4 @@
 	  		org.isima.model.ServletContextListenerImpl
 	  	</listener-class>
   	</listener>
-  	
-  	<servlet>
-        <servlet-name>FileListBean</servlet-name>
-        <servlet-class>org.isima.ui.faces.bean.view.FileListBean</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>FileListBean</servlet-name>
-        <url-pattern>/FileListBean</url-pattern>
-    </servlet-mapping>
-    
-    <servlet>
-        <servlet-name>FileTreeBean</servlet-name>
-        <servlet-class>org.isima.ui.faces.bean.view.FileTreeBean</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>FileTreeBean</servlet-name>
-        <url-pattern>/FileTreeBean</url-pattern>
-    </servlet-mapping>
-
 </web-app>

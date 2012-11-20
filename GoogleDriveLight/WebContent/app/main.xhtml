@@ -8,8 +8,6 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:cc="http://java.sun.com/jsf/composite">
 	
-<f:loadBundle basename="org.isima.resources.lang.messages" var="msg"/>
-
 <h:head>
 	<title>Google Drive Light</title>
 </h:head>
@@ -45,12 +43,12 @@
 		<!-- Arbre des fichiers (gauche) -->
 		<p:layoutUnit position="west" size="330" header="#{msg['drive']}" resizable="true">
 		    <h:form id="formTree">
-			   <p:tree value="#{fileTreeBean.model}" var="node" dynamic="true" cache="true" 
+			   <p:tree value="#{driveManagedBean.model}" var="node" dynamic="true" cache="true" 
 			           id="tree"
-			           selection="#{fileTreeBean.selectedNode}"  			 
+			           selection="#{driveManagedBean.selectedNode}"  			 
                   	   selectionMode="single" >
                   	   
-                   <p:ajax event="select" listener="#{fileListBean.onNodeSelect}" update=":formTable, :formDetails" />	   
+                   <p:ajax event="select" listener="#{driveManagedBean.onNodeSelect}" update=":formTable, :formDetails" />	   
 			       <p:treeNode>
 			           <h:outputText value="#{node}" id="lblNode"/>
 			       </p:treeNode>
@@ -61,14 +59,14 @@
 	    <!-- Détails d'un répertoire (centre) -->
 		<p:layoutUnit position="center">	
 		    <h:form id="formTable">		  
-			    <p:dataTable id="table" var="file" value="#{fileListBean.model}" 
-			    			 selection="#{fileListBean.selectedFile}"
-			                 selectionMode="single">		        
+			    <p:dataTable id="table" var="file" value="#{driveManagedBean.dirContent}" 
+			    			 selection="#{driveManagedBean.selectedFile}"
+			                 selectionMode="single" rowKey="#{file.path}">		        
 			       			       	
-			        <p:ajax event="rowSelect" listener="#{fileListBean.onRowSelect}" update=":formDetails" />			        
+			        <p:ajax event="rowSelect" listener="#{driveManagedBean.onRowSelect}" update=":formDetails" />			        
 			        
 			        <f:facet name="header">  
-            			#{fileListBean.currentDirectory}  
+            			#{driveManagedBean.currentDirectory}  
         			</f:facet>			        
 			        
 			        <p:column sortBy="#{file.name}">
@@ -107,7 +105,7 @@
 	    <!-- Détails d'un fichier (gauche) -->
 	    <p:layoutUnit position="east" size="330" header="#{msg['details']}" resizable="true">
 		    <h:form id="formDetails">
-			   <p:dataTable id="table" var="file" value="#{fileListBean.selectedFile}" rendered="#{fileListBean.selectedFile != null}">
+			   <p:dataTable id="table" var="file" value="#{driveManagedBean.selectedFile}" rendered="#{driveManagedBean.selectedFile != null}">
 			        <p:column>
 			            <f:facet name="header">
 			            	File Name
@@ -123,25 +121,13 @@
 			        </p:column>
 				</p:dataTable>
 				
-				<h:outputText value="#{msg['fileDetails']}" rendered="#{fileListBean.selectedFile == null}"></h:outputText>
+				<h:outputText value="#{msg['fileDetails']}" rendered="#{driveManagedBean.selectedFile == null}"></h:outputText>
 			</h:form>				
 	    </p:layoutUnit>
 	    
 	</p:layout>
 	
-	<!-- Dialog permettant la création d'un nouveau fichier texte -->
-	<p:dialog header="#{msg['labelTypeName']}" widgetVar="dlgNewTxtFile" resizable="false" modal="true">  
 	
-    <h:form>  
-        <h:panelGrid columns="2" style="margin-bottom:10px">  
-            <h:outputLabel for="firstname" value="#{msg['labelName']}" />  
-            <p:inputText id="firstname" value="#{fileManagedBean.filename}" />  
-        </h:panelGrid>  
-  
-       <p:commandButton id="submitButton" value="#{msg['labelValid']}" action="#{fileManagedBean.createFile}" oncomplete="dlgNewTxtFile.hide();"/>     
-              
-    </h:form>  
-</p:dialog>
 
 </h:body>
 </html>
