@@ -63,7 +63,7 @@
 			    			 selection="#{driveManagedBean.selectedFile}"
 			                 selectionMode="single" rowKey="#{file.path}">		        
 			       			       	
-			        <p:ajax event="rowSelect" listener="#{driveManagedBean.onRowSelect}" update=":formDetails" />			        
+			        <p:ajax event="rowSelect" listener="#{driveManagedBean.onRowSelect}" update=":formDetails :formTable :formTree" />			        
 			        
 			        <f:facet name="header">  
             			#{driveManagedBean.currentDirectory}  

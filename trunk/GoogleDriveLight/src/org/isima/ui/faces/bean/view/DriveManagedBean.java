@@ -55,6 +55,11 @@ public class DriveManagedBean implements Serializable {
 		injector.inject(this);
 		
 		model = service.getTree(userHome);
+		selectedNode = model.getChildren().get(0);
+		
+		selectedNode.setExpanded(true);
+		selectedNode.setSelected(true);
+		
 		dirContent = service.getFiles(currentDirectory);
 	}
 
@@ -79,8 +84,11 @@ public class DriveManagedBean implements Serializable {
 	}
 	
 	public void onNodeSelect(NodeSelectEvent event) {  
-	     
-		FileInfos file = (FileInfos) event.getTreeNode().getData();	
+	    
+		selectedNode = event.getTreeNode();
+		selectedNode.setExpanded(true);
+		
+		FileInfos file = (FileInfos)selectedNode.getData();	
 		currentDirectory = file.getPath();
 		
 		dirContent = service.getFiles(currentDirectory);
@@ -88,7 +96,22 @@ public class DriveManagedBean implements Serializable {
 	
 	public void onRowSelect(SelectEvent event) {  
         
-		selectedFile = (FileInfos)event.getObject();		
+		selectedFile = (FileInfos)event.getObject();
+		
+		if (selectedFile.isDirectory()) {
+			
+			TreeNode node = service.getNodeFromFile(selectedNode, selectedFile);
+			
+			selectedNode.setSelected(false);
+			
+			node.setSelected(true);
+			node.setExpanded(true);
+			
+			currentDirectory = ((FileInfos)node.getData()).getPath();
+			
+			dirContent = service.getFiles(currentDirectory);
+			selectedNode = node;
+		}
     }
 	
 	public void setSelectedFile(FileInfos selectedFile) {

@@ -23,4 +23,24 @@ public class FileListerService implements IFileService, Serializable {
 		return FileLister.getFiles(dirPath);
 	}
 
+	@Override
+	public TreeNode getNodeFromFile(TreeNode root, FileInfos file) {
+		
+		System.out.println(root);
+		System.out.println(root.getChildCount());
+		System.out.println(file.getPath());
+		
+		for (TreeNode node : root.getChildren()) {
+			
+			FileInfos fileInfos = (FileInfos)node.getData();
+			
+			System.out.println(fileInfos.getPath());
+			
+			if (fileInfos.getPath().equals(file.getPath()))
+				return node;			
+		}
+		
+		return null;
+	}
+
 }
