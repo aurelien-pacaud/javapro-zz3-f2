@@ -9,4 +9,5 @@ public interface IFileService  {
 
 	public TreeNode getTree(String path);
 	public List<FileInfos> getFiles(String dirPath);
+	public TreeNode getNodeFromFile(TreeNode root, FileInfos file);
 }
