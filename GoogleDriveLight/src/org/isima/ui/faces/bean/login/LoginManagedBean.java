@@ -16,7 +16,7 @@ public class LoginManagedBean implements Serializable  {
 	
 	private final String allowUsername = "admin";
 	private final String allwPassword = "admin";
-	private final String userHome = "/home/aurelien/Cours/";
+	private final String userHome = "H:\\Tests";
 	
 	private String username;
 	private String password;
@@ -29,12 +29,13 @@ public class LoginManagedBean implements Serializable  {
 			ServletContext servletContext = (ServletContext)context.getExternalContext().getContext();
 			
 			Injector injector = (Injector)servletContext.getAttribute("injector");
+			
 			try {
 				injector.bind(String.class).annotatedWith(InjectedValue.class).to(userHome);
 			} catch (MultipleBindException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
 			
 			return "loginSuccess";
 		}
@@ -46,11 +47,6 @@ public class LoginManagedBean implements Serializable  {
 	}
 	
 	public String logout() {
-		
-		//FacesContext facesContext = FacesContext.getCurrentInstance();
-		//HttpSession httpSession = (HttpSession)facesContext.getExternalContext().getSession(false);
-		//httpSession.invalidate();
-				
 		return "logoutSuccess";
 	}
 	
