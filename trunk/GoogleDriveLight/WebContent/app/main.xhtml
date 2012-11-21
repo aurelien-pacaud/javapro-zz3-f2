@@ -15,8 +15,8 @@
 	
 	<!-- Permet la deconnexion -->
 	<h:form>
-		<p:commandLink id="ajax" actionListener="#{loginManagedBean.logout}" ajax="false">  
-        	<h:outputText value="#{loginManagedBean.username}" />  
+		<p:commandLink id="ajax" action="#{loginManagedBean.logout}" ajax="false">  
+        	<h:outputText value="#{msg['labelDeco']} (#{loginManagedBean.username})" />
     	</p:commandLink>
     </h:form>
 	
@@ -29,10 +29,10 @@
 			        <p:menuitem value="#{msg['labelMenuFileNewPresentationFile']}" icon="ui-icon-contact"/>
 			        <p:menuitem value="#{msg['labelMenuFileNewDrawFile']}" icon="ui-icon-image"/>
 			        <p:separator /> 
-			        <p:menuitem value="#{msg['labelMenuFileNewDirectory']}" icon="ui-icon-folder-collapsed"/>  
+			        <p:menuitem value="#{msg['labelMenuFileNewDirectory']}" icon="ui-icon-folder-collapsed" oncomplete="dlgNewDir.show()"/>  
 			    </p:submenu> 
 			    <p:separator />  
-			    <p:menuitem value="#{msg['labelMenuFileQuit']}" icon="ui-icon-squaresmall-close"/>  
+			    <p:menuitem value="#{msg['labelMenuFileQuit']}" icon="ui-icon-squaresmall-close" action="#{loginManagedBean.logout}"/>  
 			</p:submenu>  
 		</p:menubar>
 	</h:form>
@@ -57,8 +57,16 @@
 	    </p:layoutUnit>
 	    
 	    <!-- Détails d'un répertoire (centre) -->
-		<p:layoutUnit position="center">	
-		    <h:form id="formTable">		  
+		<p:layoutUnit position="center">
+				
+		    <h:form id="formTable">
+		    
+		    	<!-- Contextmenu de la table -->
+				 <p:contextMenu for="table">  
+			        <p:menuitem value="#{msg['labelDelete']}" update=":formTable" icon="ui-icon-close" action="#{driveManagedBean.deleteFile}"/>  
+			    </p:contextMenu> 
+		    
+		    	<!-- Définition de la table -->			  
 			    <p:dataTable id="table" var="file" value="#{driveManagedBean.dirContent}" 
 			    			 selection="#{driveManagedBean.selectedFile}"
 			                 selectionMode="single" rowKey="#{file.path}">		        
@@ -66,8 +74,8 @@
 			        <p:ajax event="rowSelect" listener="#{driveManagedBean.onRowSelect}" update=":formDetails :formTable :formTree" />			        
 			        
 			        <f:facet name="header">  
-            			#{driveManagedBean.currentDirectory}  
-        			</f:facet>			        
+            			#{driveManagedBean.currentDirectory}
+        			</f:facet>  
 			        
 			        <p:column sortBy="#{file.name}">
 			            <f:facet name="header">
@@ -98,11 +106,11 @@
 			        </p:column>
 			    </p:dataTable>
 			
-			</h:form>
+			</h:form>  
 					
 	    </p:layoutUnit>
 	    
-	    <!-- Détails d'un fichier (gauche) -->
+	    <!-- Détails d'un fichier (droite) -->
 	    <p:layoutUnit position="east" size="330" header="#{msg['details']}" resizable="true">
 		    <h:form id="formDetails">
 			   <p:dataTable id="table" var="file" value="#{driveManagedBean.selectedFile}" rendered="#{driveManagedBean.selectedFile != null}">
@@ -127,7 +135,32 @@
 	    
 	</p:layout>
 	
-	
+	<!-- Dialog permettant la création d'un nouveau fichier texte -->
+    <p:dialog header="#{msg['labelTypeName']}" widgetVar="dlgNewTxtFile" resizable="false" modal="true">
+	    <h:form>  
+	        <h:panelGrid columns="2" style="margin-bottom:10px">  
+	            <h:outputLabel for="name" value="#{msg['labelName']}" />  
+	            <p:inputText id="name" value="#{driveManagedBean.filename}" />   
+	        </h:panelGrid>  
+	  
+	       <p:commandButton value="#{msg['labelValid']}" action="#{driveManagedBean.createFile}" oncomplete="dlgNewTxtFile.hide();" update=":formTable"/>     
+	              
+	    </h:form>
+    </p:dialog>
+    
+    <!-- Dialog permettant la creéation d'un nouveau répertoire -->
+     <p:dialog header="#{msg['labelTitreDialogNewRep']}" widgetVar="dlgNewDir" resizable="false" modal="true">
+	    <h:form>  
+	        <h:panelGrid columns="2" style="margin-bottom:10px">  
+	            <h:outputLabel for="name" value="#{msg['labelNameRep']}" />  
+	            <p:inputText id="name" value="#{driveManagedBean.dirpath}" />   
+	        </h:panelGrid>  
+	  
+	       <p:commandButton value="#{msg['labelValid']}" action="#{driveManagedBean.createDirectory}" oncomplete="dlgNewDir.hide();" update=":formTable"/>     
+	              
+	    </h:form>
+    </p:dialog>
+    
 
 </h:body>
 </html>

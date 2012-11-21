@@ -8,6 +8,7 @@ import javax.servlet.ServletContext;
 
 import org.isima.annotation.FileLister;
 import org.isima.model.FileInfos;
+import org.isima.services.IFileOperationService;
 import org.isima.services.IFileService;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.SelectEvent;
@@ -44,7 +45,13 @@ public class DriveManagedBean implements Serializable {
 	@InjectedValue
 	private String currentDirectory;
 	
-	private FileInfos selectedFile;	
+	@Inject
+	private IFileOperationService fileOperationService;
+	
+	private FileInfos selectedFile;
+	
+	private String filename;
+	private String dirpath;
 	
 	public DriveManagedBean() throws NotNullBindingException, MultipleBindException {
 		
@@ -124,5 +131,47 @@ public class DriveManagedBean implements Serializable {
 	
 	public String getCurrentDirectory() {
 		return currentDirectory;
+	}
+	
+	public String getFilename() {
+		return filename;
+	}
+	
+	public void setFilename (String filename) {
+		this.filename = filename;
+	}
+	
+	public void setDirpath (String dirpath)
+	{
+		this.dirpath = dirpath;
+	}
+	
+	public String getDirpath () {
+		return dirpath;
+	}
+	
+	/**
+	 * Permet la creation d'un fichier depuis l'interface du Drive
+	 */
+	public void createFile () {
+		fileOperationService.createNewFile(String.format("%s/%s",currentDirectory,filename));
+		dirContent = service.getFiles(currentDirectory);
+	}
+	
+	/**
+	 * Permet la suppression d'un fichier depuis l'interface du Drive
+	 */
+	public void deleteFile () {
+		
+		fileOperationService.deleteFile(selectedFile.getPath());
+		dirContent = service.getFiles(currentDirectory);
+	}
+	
+	/**
+	 * Permet la création d'un nouveau répertoire depuis l'interface du Drive
+	 */
+	public void createDirectory () {
+		
+		System.out.println("debug : creating directory " + String.format("%s/%s",currentDirectory,dirpath));
 	}
 }
