@@ -124,4 +124,8 @@ public class FileInfos implements Serializable {
 		
 		return file.isHidden();
 	}
+	
+	public File getFile() {
+		return file;
+	}
 }

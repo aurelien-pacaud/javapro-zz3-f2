@@ -1,15 +1,18 @@
 package org.isima.ui.faces.bean.view;
 
+import java.io.File;
+import java.io.FileFilter;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.faces.context.FacesContext;
-import javax.servlet.ServletContext;
+import javax.annotation.PostConstruct;
 
 import org.isima.annotation.FileLister;
 import org.isima.model.FileInfos;
+import org.isima.model.FileTreeNodeModel;
 import org.isima.services.IFileOperationService;
 import org.isima.services.IFileService;
+import org.isima.singleton.GoogleDriveLightInjector;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.TreeNode;
@@ -25,13 +28,13 @@ public class DriveManagedBean implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/* Model représentant l'arbre des données à afficher. */
-	private TreeNode model;
+	private FileTreeNodeModel model;
 	
 	/* Sous model représentant la hérarchie sélectionnée. */
 	private TreeNode selectedNode;
 	
 	/* Contenu du répertoire sélectionné. */
-	private List<FileInfos> dirContent;
+	private List<TreeNode> dirContent;
 	
 	@Inject
 	@InjectedValue
@@ -41,36 +44,46 @@ public class DriveManagedBean implements Serializable {
 	@FileLister
 	private IFileService service;
 	
-	@Inject
-	@InjectedValue
 	private String currentDirectory;
 	
+	private TreeNode selectedFile;	
 	@Inject
 	private IFileOperationService fileOperationService;
-	
-	private FileInfos selectedFile;
 	
 	private String filename;
 	private String dirpath;
 	
-	public DriveManagedBean() throws NotNullBindingException, MultipleBindException {
+	private String pattern;
+	
+	@PostConstruct
+	public void init() {
+	
+		Injector injector = GoogleDriveLightInjector.getInstance();		
 		
-		FacesContext context = FacesContext.getCurrentInstance();
-		ServletContext servletContext = (ServletContext)context.getExternalContext().getContext();
+		try {
+			injector.inject(this);
+		} catch (NotNullBindingException e) {
+			e.printStackTrace();
+		} catch (MultipleBindException e) {
+			e.printStackTrace();
+		}
 		
-		Injector injector = (Injector)servletContext.getAttribute("injector");		
-		injector.inject(this);
+		model = new FileTreeNodeModel();
+				
+		currentDirectory = userHome;
+		TreeNode driveNode = service.getTree(userHome);	
 		
-		model = service.getTree(userHome);
-		selectedNode = model.getChildren().get(0);
+		driveNode.setParent(model);		
+		
+		setSelectedNode(driveNode);
 		
 		selectedNode.setExpanded(true);
 		selectedNode.setSelected(true);
 		
-		dirContent = service.getFiles(currentDirectory);
+		dirContent = service.getFiles(selectedNode);
 	}
-
-	public TreeNode getModel() {
+	
+	public FileTreeNodeModel getModel() {
 		
 		return model;
 	}
@@ -80,9 +93,23 @@ public class DriveManagedBean implements Serializable {
 		return selectedNode;
 	}
 	
-	public List<FileInfos> getDirContent() {
+	public List<TreeNode> getDirContent() {
 		
 		return dirContent;
+	}
+	
+	public void search() {
+		
+		dirContent = model.filter(new FileFilter() {
+			
+			@Override
+			public boolean accept(File file) {
+				
+				return (file.getName().matches(pattern.replace("*", ".*")) && file.isFile());
+			}
+		});
+		
+		currentDirectory = pattern;
 	}
 
 	public void setSelectedNode(TreeNode selectedNode) {
@@ -95,37 +122,39 @@ public class DriveManagedBean implements Serializable {
 		selectedNode = event.getTreeNode();
 		selectedNode.setExpanded(true);
 		
-		FileInfos file = (FileInfos)selectedNode.getData();	
+		FileInfos file = (FileInfos)(selectedNode.getData());	
 		currentDirectory = file.getPath();
 		
-		dirContent = service.getFiles(currentDirectory);
+		dirContent = service.getFiles(selectedNode);
     } 
 	
 	public void onRowSelect(SelectEvent event) {  
         
-		selectedFile = (FileInfos)event.getObject();
+		TreeNode node = (TreeNode)event.getObject();
+		FileInfos file = (FileInfos)selectedFile.getData();
 		
-		if (selectedFile.isDirectory()) {
-			
-			TreeNode node = service.getNodeFromFile(selectedNode, selectedFile);
-			
+		if (file.isDirectory()) {
+						
 			selectedNode.setSelected(false);
+			selectedNode.setExpanded(true);
 			
 			node.setSelected(true);
 			node.setExpanded(true);
-			
-			currentDirectory = ((FileInfos)node.getData()).getPath();
-			
-			dirContent = service.getFiles(currentDirectory);
+
 			selectedNode = node;
+			
+			currentDirectory = file.getPath();
+			
+			dirContent = service.getFiles(selectedNode);
+			selectedFile = null;			
 		}
     }
 	
-	public void setSelectedFile(FileInfos selectedFile) {
+	public void setSelectedFile(TreeNode selectedFile) {
 		this.selectedFile = selectedFile;
 	}
 	
-	public FileInfos getSelectedFile() {
+	public TreeNode getSelectedFile() {
 		return selectedFile;
 	}
 	
@@ -155,7 +184,7 @@ public class DriveManagedBean implements Serializable {
 	 */
 	public void createFile () {
 		fileOperationService.createNewFile(String.format("%s/%s",currentDirectory,filename));
-		dirContent = service.getFiles(currentDirectory);
+		dirContent = service.getFiles(selectedNode);
 	}
 	
 	/**
@@ -163,15 +192,23 @@ public class DriveManagedBean implements Serializable {
 	 */
 	public void deleteFile () {
 		
-		fileOperationService.deleteFile(selectedFile.getPath());
-		dirContent = service.getFiles(currentDirectory);
+		fileOperationService.deleteFile(((FileInfos)selectedFile.getData()).getPath());
+		dirContent = service.getFiles(selectedNode);
 	}
 	
 	/**
-	 * Permet la cr�ation d'un nouveau r�pertoire depuis l'interface du Drive
+	 * Permet la cr�ation d'un nouveau r�pertoire depuis l'interface du Drive
 	 */
 	public void createDirectory () {
 		
 		System.out.println("debug : creating directory " + String.format("%s/%s",currentDirectory,dirpath));
+	}
+
+	public String getPattern() {
+		return pattern;
+	}
+
+	public void setPattern(String pattern) {
+		this.pattern = pattern;
 	}
 }

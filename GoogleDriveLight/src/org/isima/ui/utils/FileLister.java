@@ -11,22 +11,26 @@ import org.primefaces.model.DefaultTreeNode;
 
 public class FileLister {
 
-	static public List<FileInfos> getFiles(String path) {
+	static public List<TreeNode> getFiles(String path) {
 		
-		final List<FileInfos> orderingFiles = new ArrayList<FileInfos>();
-		final List<FileInfos> orderingDirectories = new ArrayList<FileInfos>();
+		final List<TreeNode> orderingFiles = new ArrayList<TreeNode>();
+		final List<TreeNode> orderingDirectories = new ArrayList<TreeNode>();
 		
 		File[] files = new File(path).listFiles();
-		Arrays.sort(files);
 		
-		for (File file : files) {
+		if (files != null) {			
+		
+			Arrays.sort(files);
+		
+			for (File file : files) {
 			
-			FileInfos fileInfos = new FileInfos(file.getAbsolutePath());
+				FileInfos fileInfos = new FileInfos(file.getAbsolutePath());
 			
-			if (!file.isDirectory())
-				orderingFiles.add(fileInfos);
-			else
-				orderingDirectories.add(fileInfos);
+				if (!file.isDirectory())
+					orderingFiles.add(new DefaultTreeNode(fileInfos, null));
+				else
+					orderingDirectories.add(new DefaultTreeNode(fileInfos, null));
+			}
 		}
 			
 		orderingDirectories.addAll(orderingFiles);
@@ -36,26 +40,23 @@ public class FileLister {
 	
 	static public TreeNode getTree(String path) {
 				
-		final TreeNode root = new DefaultTreeNode("Root", null);		
-
-		DefaultTreeNode childNode = new DefaultTreeNode(new FileInfos("Mon Drive", path), root);
-		
-		FileLister.buildTree(new FileInfos(path), childNode);		
+		final TreeNode root = new DefaultTreeNode(new FileInfos(path), null);				
+		FileLister.buildTree(path, root);		
 	
 		return root;
 	}
 	
 
-	private static void buildTree(FileInfos fileInfos, TreeNode parentNode) {	
+	private static void buildTree(String path, TreeNode parentNode) {	
 		
-		List<FileInfos> filesInfosList = FileLister.getFiles(fileInfos.getPath());
+		List<TreeNode> filesInfosList = FileLister.getFiles(path);
 	
-		for(FileInfos childFileInfos : filesInfosList) {
+		for(TreeNode childFileInfos : filesInfosList) {
 		
-			if (childFileInfos.isDirectory()) {
-				DefaultTreeNode childNode = new DefaultTreeNode(childFileInfos, parentNode);
-				buildTree(childFileInfos, childNode);
-			}
+			FileInfos file = (FileInfos)childFileInfos.getData();
+			
+			DefaultTreeNode childNode = new DefaultTreeNode(file, parentNode);
+			buildTree(file.getPath(), childNode);
 		}
 	}
 }

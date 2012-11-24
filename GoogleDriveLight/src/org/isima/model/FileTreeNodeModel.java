@@ -1,0 +1,36 @@
+package org.isima.model;
+
+import java.io.FileFilter;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.primefaces.model.DefaultTreeNode;
+import org.primefaces.model.TreeNode;
+
+public class FileTreeNodeModel extends DefaultTreeNode {
+
+	private static final long serialVersionUID = 1L;
+	
+	public List<TreeNode> filter(FileFilter file) {
+		
+		List<TreeNode> matchFiles = new ArrayList<TreeNode>();
+		
+		_filter(this, file, matchFiles);
+		
+		return matchFiles;
+	}
+	
+	private void _filter(TreeNode parentNode, FileFilter file, List<TreeNode> list) {		
+		
+		for (TreeNode childnode : parentNode.getChildren()) {
+		
+			FileInfos fileInfos = (FileInfos)childnode.getData();
+			
+			if (file.accept(fileInfos.getFile())) {
+			
+				list.add(new DefaultTreeNode(fileInfos, null));				
+			}
+			_filter(childnode, file, list);
+		}		
+	}
+}
