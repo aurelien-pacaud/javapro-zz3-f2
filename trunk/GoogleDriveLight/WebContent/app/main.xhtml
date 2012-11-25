@@ -9,6 +9,7 @@
 	xmlns:cc="http://java.sun.com/jsf/composite">
 	
 <h:head>
+	<h:outputStylesheet library="css" name="style.css" />
 	<title>Google Drive Light</title>
 </h:head>
 <h:body>
@@ -48,15 +49,16 @@
 		<p:layoutUnit position="west" size="330" header="#{msg['drive']}" resizable="true">
 		    <h:form id="formTree">
 			   <p:tree value="#{driveManagedBean.model}" var="node" dynamic="true" cache="true" 
-			           id="tree"
+			           id="tree" 
 			           selection="#{driveManagedBean.selectedNode}"  			 
                   	   selectionMode="single" >
                   	   
                    <p:ajax event="select" listener="#{driveManagedBean.onNodeSelect}" update=":formTree, :formTable, :formDetails" />	   
 			       
-			       <p:treeNode>
-			           <h:graphicImage alt="folder" value="/images/folder.png" /> <h:outputText value=" #{node}" />
-			       </p:treeNode>
+		           <p:treeNode rendered="#{node.directory}" styleClass="#{!node.directory ? 'noDisplayTreeNode' : ''}">
+		             <h:graphicImage alt="folder" value="/resources/images/folder.png" /> <h:outputText value=" #{node}" />
+		       	   </p:treeNode>
+
 			   </p:tree>		
 			</h:form>				
 	    </p:layoutUnit>
@@ -71,22 +73,20 @@
 			        <p:menuitem value="#{msg['labelDelete']}" update=":formTable :formTree" icon="ui-icon-close" action="#{driveManagedBean.deleteFile}"/>  
 			    </p:contextMenu> 
 		    
+		    	<p:breadCrumb model="#{driveManagedBean.breadCrumb}" rendered="#{driveManagedBean.pattern == null}" />
+		    			    
 		    	<!-- Définition de la table -->			  
 			    <p:dataTable id="table" var="file" value="#{driveManagedBean.dirContent}" 
 			    			 selection="#{driveManagedBean.selectedFile}"
 			                 selectionMode="single" rowKey="#{file.data.path}">		        
 			       			       	
 			        <p:ajax event="rowSelect" listener="#{driveManagedBean.onRowSelect}" update=":formDetails :formTable :formTree" />			        
-			        
-			        <f:facet name="header">  
-            			#{driveManagedBean.currentDirectory}
-        			</f:facet>  
-			        
+			        			        
 			        <p:column sortBy="#{file.data.name}">
 			            <f:facet name="header">
 			            	Name
 			            </f:facet>
-			            <h:graphicImage value="/images/#{file.data.type.toString().toLowerCase()}.png"/> <h:outputText value=" #{file.data.name}"/>
+			            <h:graphicImage value="/resources/images/#{file.data.type.toString().toLowerCase()}.png"/> <h:outputText value=" #{file.data.name}"/>
 			        </p:column>
 			
 			        <p:column sortBy="#{file.data.type}">
