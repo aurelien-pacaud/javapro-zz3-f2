@@ -11,13 +11,14 @@ public class FileOperationService implements IFileOperationService, Serializable
 	@Override
 	public void createNewFile(String filename) {
 		
-		File newFile = new File(filename);
-		try 
-		{
-			newFile.createNewFile();
+		File file = new File(filename);
+		
+		try {
+			
+			file.createNewFile();
 		} 
-		catch (IOException e) 
-		{
+		catch (IOException e) {
+			
 			e.printStackTrace();
 		}
 	}
@@ -25,8 +26,14 @@ public class FileOperationService implements IFileOperationService, Serializable
 	@Override
 	public void deleteFile(String filename) {
 		
-		System.out.println("debug : deleting file : " + filename);
 		File file = new File(filename);
 		file.delete();
+	}
+
+	@Override
+	public void createFolder(String dirName) {
+		
+		File file = new File(dirName);		
+		file.mkdir();		
 	}
 }

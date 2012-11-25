@@ -51,7 +51,7 @@ public class DriveManagedBean implements Serializable {
 	private IFileOperationService fileOperationService;
 	
 	private String filename;
-	private String dirpath;
+	private String dirname;
 	
 	private String pattern;
 	
@@ -170,21 +170,24 @@ public class DriveManagedBean implements Serializable {
 		this.filename = filename;
 	}
 	
-	public void setDirpath (String dirpath)
+	public void setDirname (String dirname)
 	{
-		this.dirpath = dirpath;
+		this.dirname = dirname;
 	}
 	
-	public String getDirpath () {
-		return dirpath;
+	public String getDirname () {
+		return dirname;
 	}
 	
 	/**
 	 * Permet la creation d'un fichier depuis l'interface du Drive
 	 */
 	public void createFile () {
-		fileOperationService.createNewFile(String.format("%s/%s",currentDirectory,filename));
-		dirContent = service.getFiles(selectedNode);
+		
+		String path = String.format("%s/%s", currentDirectory, filename);
+		
+		fileOperationService.createNewFile(path);
+		model.createFile(selectedNode, path);
 	}
 	
 	/**
@@ -193,15 +196,19 @@ public class DriveManagedBean implements Serializable {
 	public void deleteFile () {
 		
 		fileOperationService.deleteFile(((FileInfos)selectedFile.getData()).getPath());
-		dirContent = service.getFiles(selectedNode);
+		model.deleteFile(selectedNode, selectedFile);
 	}
 	
 	/**
-	 * Permet la cr�ation d'un nouveau r�pertoire depuis l'interface du Drive
+	 * Permet la création d'un nouveau répertoire depuis l'interface du Drive
 	 */
 	public void createDirectory () {
 		
-		System.out.println("debug : creating directory " + String.format("%s/%s",currentDirectory,dirpath));
+		String path = String.format("%s/%s", currentDirectory, dirname);
+		System.out.print(path);
+		
+		fileOperationService.createFolder(path);
+		model.createFolder(selectedNode, path);
 	}
 
 	public String getPattern() {
