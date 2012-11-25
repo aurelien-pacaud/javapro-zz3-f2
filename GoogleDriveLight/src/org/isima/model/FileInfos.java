@@ -73,7 +73,7 @@ public class FileInfos implements Serializable {
 		else {
 
 			String name = getName();
-			int dotPos = name.indexOf('.');
+			int dotPos = name.lastIndexOf('.');
 						
 			if (dotPos != -1) {
 			

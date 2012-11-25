@@ -33,7 +33,7 @@ public class ServletContextListenerImpl implements ServletContextListener {
 		try {
 			
 			injector.bind(IFileService.class).annotatedWith(FileLister.class).to(FileListerService.class);
-			injector.bind(String.class).annotatedWith(InjectedValue.class).to("/home/aurelien/");
+			injector.bind(String.class).annotatedWith(InjectedValue.class).to("/tmp/Test/");
 			injector.bind(IFileOperationService.class).to(FileOperationService.class);
 			
 		} catch (MultipleBindException e) {

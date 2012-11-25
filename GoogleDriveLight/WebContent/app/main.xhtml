@@ -68,7 +68,7 @@
 		    
 		    	<!-- Contextmenu de la table -->
 				 <p:contextMenu for="table">  
-			        <p:menuitem value="#{msg['labelDelete']}" update=":formTable" icon="ui-icon-close" action="#{driveManagedBean.deleteFile}"/>  
+			        <p:menuitem value="#{msg['labelDelete']}" update=":formTable :formTree" icon="ui-icon-close" action="#{driveManagedBean.deleteFile}"/>  
 			    </p:contextMenu> 
 		    
 		    	<!-- Définition de la table -->			  
@@ -146,31 +146,30 @@
 	</p:layout>
 	
 	<!-- Dialog permettant la création d'un nouveau fichier texte -->
-    <p:dialog header="#{msg['labelTypeName']}" widgetVar="dlgNewTxtFile" resizable="false" modal="true">
+    <p:dialog header="#{msg['labelTitreName']}" widgetVar="dlgNewTxtFile" draggable="false" resizable="false" modal="true">
 	    <h:form>  
 	        <h:panelGrid columns="2" style="margin-bottom:10px">  
 	            <h:outputLabel for="name" value="#{msg['labelName']}" />  
 	            <p:inputText id="name" value="#{driveManagedBean.filename}" />   
 	        </h:panelGrid>  
 	  
-	       <p:commandButton value="#{msg['labelValid']}" action="#{driveManagedBean.createFile}" oncomplete="dlgNewTxtFile.hide();" update=":formTable"/>     
+	       <p:commandButton value="#{msg['labelValid']}" action="#{driveManagedBean.createFile}" oncomplete="dlgNewTxtFile.hide();" update=":formTable :formTree"/>     
 	              
 	    </h:form>
     </p:dialog>
     
-    <!-- Dialog permettant la creéation d'un nouveau répertoire -->
-     <p:dialog header="#{msg['labelTitreDialogNewRep']}" widgetVar="dlgNewDir" resizable="false" modal="true">
+    <!-- Dialog permettant la création d'un nouveau répertoire -->
+     <p:dialog header="#{msg['labelTitreDialogNewRep']}" widgetVar="dlgNewDir" draggable="false" resizable="false" modal="true">
 	    <h:form>  
 	        <h:panelGrid columns="2" style="margin-bottom:10px">  
 	            <h:outputLabel for="name" value="#{msg['labelNameRep']}" />  
-	            <p:inputText id="name" value="#{driveManagedBean.dirpath}" />   
+	            <p:inputText id="name" value="#{driveManagedBean.dirname}" />   
 	        </h:panelGrid>  
 	  
-	       <p:commandButton value="#{msg['labelValid']}" action="#{driveManagedBean.createDirectory}" oncomplete="dlgNewDir.hide();" update=":formTable"/>     
+	       <p:commandButton value="#{msg['labelValid']}" action="#{driveManagedBean.createDirectory}" oncomplete="dlgNewDir.hide();" update=":formTable :formTree"/>     
 	              
 	    </h:form>
-    </p:dialog>
-    
+    </p:dialog>    
 
 </h:body>
 </html>

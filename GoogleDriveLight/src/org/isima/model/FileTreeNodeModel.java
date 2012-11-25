@@ -33,4 +33,18 @@ public class FileTreeNodeModel extends DefaultTreeNode {
 			_filter(childnode, file, list);
 		}		
 	}
+
+	public void createFile(TreeNode root, String path) {
+		
+		new DefaultTreeNode(new FileInfos(path), root);		
+	}
+
+	public void deleteFile(TreeNode root, TreeNode selectedFile) {
+		root.getChildren().remove(selectedFile);		
+	}
+
+	public void createFolder(TreeNode root, String path) {
+		
+		new DefaultTreeNode(new FileInfos(path), root);		
+	}
 }
