@@ -10,11 +10,13 @@ import javax.annotation.PostConstruct;
 import org.isima.annotation.FileLister;
 import org.isima.model.FileInfos;
 import org.isima.model.FileTreeNodeModel;
+import org.isima.services.BreadCrumbService;
 import org.isima.services.IFileOperationService;
 import org.isima.services.IFileService;
 import org.isima.singleton.GoogleDriveLightInjector;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.model.MenuModel;
 import org.primefaces.model.TreeNode;
 
 import fr.isima.annotation.Inject;
@@ -27,7 +29,7 @@ public class DriveManagedBean implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	/* Model représentant l'arbre des données à afficher. */
+	/* Model représentant l'arbre des données. */
 	private FileTreeNodeModel model;
 	
 	/* Sous model représentant la hérarchie sélectionnée. */
@@ -54,7 +56,7 @@ public class DriveManagedBean implements Serializable {
 	private String dirname;
 	
 	private String pattern;
-	
+		
 	@PostConstruct
 	public void init() {
 	
@@ -69,11 +71,11 @@ public class DriveManagedBean implements Serializable {
 		}
 		
 		model = new FileTreeNodeModel();
-				
+		
 		currentDirectory = userHome;
 		TreeNode driveNode = service.getTree(userHome);	
 		
-		driveNode.setParent(model);		
+		driveNode.setParent(model);
 		
 		setSelectedNode(driveNode);
 		
@@ -83,7 +85,7 @@ public class DriveManagedBean implements Serializable {
 		dirContent = service.getFiles(selectedNode);
 	}
 	
-	public FileTreeNodeModel getModel() {
+	public TreeNode getModel() {
 		
 		return model;
 	}
@@ -100,7 +102,7 @@ public class DriveManagedBean implements Serializable {
 	
 	public void search() {
 		
-		dirContent = model.filter(new FileFilter() {
+		dirContent = model.search(new FileFilter() {
 			
 			@Override
 			public boolean accept(File file) {
@@ -115,6 +117,7 @@ public class DriveManagedBean implements Serializable {
 	public void setSelectedNode(TreeNode selectedNode) {
 		
 		this.selectedNode = selectedNode;
+		pattern = null;
 	}
 	
 	public void onNodeSelect(NodeSelectEvent event) {  
@@ -151,7 +154,8 @@ public class DriveManagedBean implements Serializable {
     }
 	
 	public void setSelectedFile(TreeNode selectedFile) {
-		this.selectedFile = selectedFile;
+		this.selectedFile = selectedFile;		
+		pattern = null;
 	}
 	
 	public TreeNode getSelectedFile() {
@@ -217,5 +221,10 @@ public class DriveManagedBean implements Serializable {
 
 	public void setPattern(String pattern) {
 		this.pattern = pattern;
+	}
+
+	public MenuModel getBreadCrumb() {		
+		
+		return new BreadCrumbService().breadCrumbFromUrl(currentDirectory);
 	}
 }

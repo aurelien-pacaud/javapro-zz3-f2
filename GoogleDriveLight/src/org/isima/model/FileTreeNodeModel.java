@@ -11,16 +11,16 @@ public class FileTreeNodeModel extends DefaultTreeNode {
 
 	private static final long serialVersionUID = 1L;
 	
-	public List<TreeNode> filter(FileFilter file) {
+	public List<TreeNode> search(FileFilter file) {
 		
 		List<TreeNode> matchFiles = new ArrayList<TreeNode>();
 		
-		_filter(this, file, matchFiles);
+		_search(this, file, matchFiles);
 		
 		return matchFiles;
 	}
 	
-	private void _filter(TreeNode parentNode, FileFilter file, List<TreeNode> list) {		
+	private void _search(TreeNode parentNode, FileFilter file, List<TreeNode> list) {		
 		
 		for (TreeNode childnode : parentNode.getChildren()) {
 		
@@ -30,10 +30,10 @@ public class FileTreeNodeModel extends DefaultTreeNode {
 			
 				list.add(new DefaultTreeNode(fileInfos, null));				
 			}
-			_filter(childnode, file, list);
+			_search(childnode, file, list);
 		}		
 	}
-
+	
 	public void createFile(TreeNode root, String path) {
 		
 		new DefaultTreeNode(new FileInfos(path), root);		
