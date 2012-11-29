@@ -6,7 +6,6 @@ import javax.faces.application.ResourceDependency;
 
 import org.isifaces.component.IsiComponentCoreUtils;
 
-
 @ResourceDependencies({
 	@ResourceDependency(library="primefaces", name="primefaces.css"),
 	@ResourceDependency(library="primefaces", name="jquery/jquery.js"),

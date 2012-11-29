@@ -1,21 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="tests"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v7.0">
 		<attributes>
 			<attribute name="owner.project.facets" value="jst.utility"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/home/aurelien/Cours/JavaPro/JavaProZZ3/javapro-zz3-f2/repository/apache-commons-beanutils/commons-beanutils-1.8.3.jar"/>
-	<classpathentry kind="lib" path="/home/aurelien/Cours/JavaPro/JavaProZZ3/javapro-zz3-f2/repository/mojarra/el-api-2.2.1-b04.jar"/>
-	<classpathentry kind="lib" path="/home/aurelien/Cours/JavaPro/JavaProZZ3/javapro-zz3-f2/repository/hibernate-validator/hibernate-validator-4.3.0.Final.jar"/>
-	<classpathentry kind="lib" path="/home/aurelien/Cours/JavaPro/JavaProZZ3/javapro-zz3-f2/repository/mojarra/javax.el-2.2.4.jar"/>
-	<classpathentry kind="lib" path="/home/aurelien/Cours/JavaPro/JavaProZZ3/javapro-zz3-f2/repository/mojarra/javax.faces-2.1.14.jar"/>
-	<classpathentry kind="lib" path="/home/aurelien/Cours/JavaPro/JavaProZZ3/javapro-zz3-f2/repository/primefaces/primefaces-3.4.jar" sourcepath="/home/aurelien/Cours/JavaPro/JavaProZZ3/javapro-zz3-f2/repository/primefaces/primefaces-3.4-sources.jar"/>
-	<classpathentry kind="lib" path="/home/aurelien/Cours/JavaPro/JavaProZZ3/javapro-zz3-f2/repository/slf4j/slf4j-api-1.6.4.jar"/>
-	<classpathentry kind="lib" path="/home/aurelien/Cours/JavaPro/JavaProZZ3/javapro-zz3-f2/repository/hibernate-validator/validation-api-1.0.0.GA.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/javax.faces-2.1.14.jar"/>
+	<classpathentry kind="lib" path="lib/primefaces-3.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
