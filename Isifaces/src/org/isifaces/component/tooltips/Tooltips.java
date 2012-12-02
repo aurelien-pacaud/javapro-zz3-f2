@@ -9,9 +9,7 @@ import org.isifaces.component.IsiComponentCoreUtils;
 @ResourceDependencies({
 	@ResourceDependency(library="primefaces", name="primefaces.css"),
 	@ResourceDependency(library="primefaces", name="jquery/jquery.js"),
-	@ResourceDependency(library="primefaces", name="primefaces.js"),
-	@ResourceDependency(library="isifaces", name="js/jquery.tipsy.js"),
-	@ResourceDependency(library="isifaces", name="css/tipsy.css")
+	@ResourceDependency(library="primefaces", name="primefaces.js")
 })
 public class Tooltips extends UIOutput implements org.primefaces.component.api.Widget {
 
@@ -44,7 +42,6 @@ public class Tooltips extends UIOutput implements org.primefaces.component.api.W
 
 	@Override
 	public String resolveWidgetVar() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }
