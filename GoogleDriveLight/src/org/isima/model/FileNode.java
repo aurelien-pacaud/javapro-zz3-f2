@@ -7,9 +7,17 @@ import java.util.List;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
-public class FileTreeNodeModel extends DefaultTreeNode {
+public class FileNode extends DefaultTreeNode {
 
 	private static final long serialVersionUID = 1L;
+	
+	public FileNode(Object data, TreeNode parent) {
+		super(data, parent);
+	}
+	
+	public FileNode() {
+		super();
+	}
 	
 	public List<TreeNode> search(FileFilter file) {
 		
@@ -33,18 +41,35 @@ public class FileTreeNodeModel extends DefaultTreeNode {
 			_search(childnode, file, list);
 		}		
 	}
+
+	public void deleteFile(TreeNode selectedFile) {
+		getChildren().remove(selectedFile);		
+	}
 	
-	public void createFile(TreeNode root, String path) {
+	@Override
+	public boolean isLeaf() {
 		
-		new DefaultTreeNode(new FileInfos(path), root);		
+		boolean isLeaf = true;
+		
+		for (TreeNode node : getChildren()) {
+			
+			FileInfos file = (FileInfos) node.getData();
+			
+			if (file.isDirectory()) {
+				isLeaf = false;
+				break;
+			}
+			else if (file.isFile())		
+				isLeaf = true;
+		}
+		
+		if (((FileInfos)getData()).isFile())
+			isLeaf = true;
+		
+		return isLeaf;		
 	}
 
-	public void deleteFile(TreeNode root, TreeNode selectedFile) {
-		root.getChildren().remove(selectedFile);		
-	}
-
-	public void createFolder(TreeNode root, String path) {
-		
-		new DefaultTreeNode(new FileInfos(path), root);		
+	public void appendChild(FileInfos file) {
+		new FileNode(file, this);		
 	}
 }

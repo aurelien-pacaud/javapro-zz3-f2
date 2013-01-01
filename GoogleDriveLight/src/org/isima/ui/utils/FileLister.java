@@ -6,15 +6,14 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.isima.model.FileInfos;
+import org.isima.model.FileNode;
 import org.primefaces.model.TreeNode;
-import org.primefaces.model.DefaultTreeNode;
 
 public class FileLister {
 
-	static public List<TreeNode> getFiles(String path) {
+	static public List<FileNode> getFiles(String path) {
 		
-		final List<TreeNode> orderingFiles = new ArrayList<TreeNode>();
-		final List<TreeNode> orderingDirectories = new ArrayList<TreeNode>();
+		final List<FileNode> orderingFiles = new ArrayList<FileNode>();
 		
 		File[] files = new File(path).listFiles();
 		
@@ -25,22 +24,16 @@ public class FileLister {
 			for (File file : files) {
 			
 				FileInfos fileInfos = new FileInfos(file.getAbsolutePath());
-			
-				if (!file.isDirectory())
-					orderingFiles.add(new DefaultTreeNode(fileInfos, null));
-				else
-					orderingDirectories.add(new DefaultTreeNode(fileInfos, null));
+				orderingFiles.add(new FileNode(fileInfos, null));					
 			}
-		}
-			
-		orderingDirectories.addAll(orderingFiles);
+		}		
 		
-		return orderingDirectories;
+		return orderingFiles;
 	}
 	
-	static public TreeNode getTree(String path) {
+	static public FileNode getTree(String path) {
 				
-		final TreeNode root = new DefaultTreeNode(new FileInfos(path), null);				
+		final FileNode root = new FileNode(new FileInfos(path), null);				
 		FileLister.buildTree(path, root);		
 	
 		return root;
@@ -49,13 +42,13 @@ public class FileLister {
 
 	private static void buildTree(String path, TreeNode parentNode) {	
 		
-		List<TreeNode> filesInfosList = FileLister.getFiles(path);
+		List<FileNode> filesInfosList = FileLister.getFiles(path);
 	
-		for(TreeNode childFileInfos : filesInfosList) {
+		for(FileNode childFileInfos : filesInfosList) {
 		
 			FileInfos file = (FileInfos)childFileInfos.getData();
 			
-			DefaultTreeNode childNode = new DefaultTreeNode(file, parentNode);
+			FileNode childNode = new FileNode(file, parentNode);
 			buildTree(file.getPath(), childNode);
 		}
 	}

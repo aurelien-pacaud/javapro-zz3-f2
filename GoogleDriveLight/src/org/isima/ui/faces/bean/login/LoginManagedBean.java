@@ -15,13 +15,17 @@ public class LoginManagedBean implements Serializable  {
 	private String username;
 	private String password;
 	
+	private boolean connected = false;
+	
 	public String login() {
 		
 		if(allowUsername.equals(username) && allwPassword.equals(password)) {
 			
+			connected = true;
 			return "loginSuccess";
 		}
 		
+		connected = false;
 		FacesContext.getCurrentInstance().addMessage(null, 
 				new FacesMessage("Not authorized !"));		
 		
@@ -29,6 +33,8 @@ public class LoginManagedBean implements Serializable  {
 	}
 	
 	public String logout() {
+		
+		connected = false;
 		return "logoutSuccess";
 	}
 	
@@ -46,5 +52,9 @@ public class LoginManagedBean implements Serializable  {
 	
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	public boolean isConnected() {
+		return connected;
 	}
 }
