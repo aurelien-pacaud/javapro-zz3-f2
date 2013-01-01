@@ -27,6 +27,17 @@
 		<p:watermark for="searchid" value="Search with a keyword" />
 	</h:form>
 	
+	<h:form enctype="multipart/form-data">
+
+    	<p:fileUpload fileUploadListener="#{driveManagedBean.handleFileUpload}"
+        	          mode="advanced" 
+            	      update="messages, :formTable"
+                      sizeLimit="100000"/>
+
+    	<p:growl id="messages" showDetail="true"/>
+
+	</h:form>
+	
 	<!-- Barre d'outils (haut) -->
 	<h:form id="menuBar">
 		<p:menubar>  
@@ -39,21 +50,27 @@
 			        <p:menuitem value="#{msg['labelMenuFileNewDirectory']}" icon="ui-icon-folder-collapsed" oncomplete="dlgNewDir.show()"/>  
 			    </p:submenu> 
 			    <p:separator />  
-			    <p:menuitem value="#{msg['labelMenuFileQuit']}" icon="ui-icon-squaresmall-close" action="#{loginManagedBean.logout}"/>  
+			    <p:menuitem value="#{msg['labelMenuFileQuit']}" icon="ui-icon-power" action="#{loginManagedBean.logout}"/>  
 			</p:submenu>  
 		</p:menubar>
 	</h:form>
+	
 	<!-- Les éléments suivants sont organisés selon un layout -->
 	<p:layout>
 		<!-- Arbre des fichiers (gauche) -->
 		<p:layoutUnit position="west" size="330" header="#{msg['drive']}" resizable="true">
 		    <h:form id="formTree">
+		       <!-- Contextmenu de la table -->
+				<p:contextMenu for="tree"> 
+			      <p:menuitem value="#{msg['labelDelete']}" update=":formTable :formTree" icon="ui-icon-trash" action="#{driveManagedBean.deleteDirectory}"/>  
+			    </p:contextMenu> 
+		    
 			   <p:tree value="#{driveManagedBean.model}" var="node" dynamic="true" cache="true" 
 			           id="tree" 
 			           selection="#{driveManagedBean.selectedNode}"  			 
                   	   selectionMode="single" >
                   	   
-                   <p:ajax event="select" listener="#{driveManagedBean.onNodeSelect}" update=":formTree, :formTable, :formDetails" />	   
+                   <p:ajax event="select" listener="#{driveManagedBean.onNodeSelect}" update=":formTable :formDetails" />	   
 			       
 		           <p:treeNode rendered="#{node.directory}" styleClass="#{!node.directory ? 'noDisplayTreeNode' : ''}">
 		             <h:graphicImage alt="folder" value="/resources/images/folder.png" /> <h:outputText value=" #{node}" />
@@ -69,8 +86,8 @@
 		    <h:form id="formTable">
 		    
 		    	<!-- Contextmenu de la table -->
-				 <p:contextMenu for="table">  
-			        <p:menuitem value="#{msg['labelDelete']}" update=":formTable :formTree" icon="ui-icon-close" action="#{driveManagedBean.deleteFile}"/>  
+				<p:contextMenu for="table"> 
+			      <p:menuitem value="#{msg['labelDelete']}" update=":formTable :formTree" icon="ui-icon-trash" action="#{driveManagedBean.deleteFile}"/>  
 			    </p:contextMenu> 
 		    
 		    	<p:breadCrumb model="#{driveManagedBean.breadCrumb}" rendered="#{driveManagedBean.pattern == null}" />
@@ -80,7 +97,7 @@
 			    			 selection="#{driveManagedBean.selectedFile}"
 			                 selectionMode="single" rowKey="#{file.data.path}">		        
 			       			       	
-			        <p:ajax event="rowSelect" listener="#{driveManagedBean.onRowSelect}" update=":formDetails :formTable :formTree" />			        
+			        <p:ajax event="rowSelect" listener="#{driveManagedBean.onRowSelect}" update=":formTable :formTree" />			        
 			        			        
 			        <p:column sortBy="#{file.data.name}">
 			            <f:facet name="header">

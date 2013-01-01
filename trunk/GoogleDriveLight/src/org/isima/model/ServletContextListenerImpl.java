@@ -5,13 +5,10 @@ import javax.servlet.ServletContextListener;
 
 import org.isima.annotation.FileLister;
 import org.isima.services.FileListerService;
-import org.isima.services.FileOperationService;
-import org.isima.services.IFileOperationService;
 import org.isima.services.IFileService;
 import org.isima.singleton.GoogleDriveLightInjector;
 
 import fr.isima.annotation.InjectedValue;
-import fr.isima.exception.CannotCreateBindingException;
 import fr.isima.exception.MultipleBindException;
 import fr.isima.injector.Injector;
 
@@ -33,11 +30,9 @@ public class ServletContextListenerImpl implements ServletContextListener {
 		try {
 			
 			injector.bind(IFileService.class).annotatedWith(FileLister.class).to(FileListerService.class);
-			injector.bind(String.class).annotatedWith(InjectedValue.class).to("/tmp/Test/");
-			injector.bind(IFileOperationService.class).to(FileOperationService.class);
+			injector.bind(String.class).annotatedWith(InjectedValue.class).to("/home/aurelien/TestJavaProDrive/");
 			
 		} catch (MultipleBindException e) {
-		} catch (CannotCreateBindingException e) {
 			e.printStackTrace();
 		}
 	}

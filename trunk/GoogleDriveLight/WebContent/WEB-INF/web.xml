@@ -34,7 +34,7 @@
 
 	<context-param>
 		<param-name>primefaces.THEME</param-name>
-		<param-value>blitzer</param-value>
+		<param-value>bootstrap</param-value>
 	</context-param>
 	
 	<!-- Ajout de la ServletListenerContext - TEST -->
@@ -43,4 +43,20 @@
 	  		org.isima.model.ServletContextListenerImpl
 	  	</listener-class>
   	</listener>
+	
+	<!--   Gestion du login  -->
+	<error-page>
+		<error-code>401</error-code>
+		<location>/login/login.xhtml</location>
+	</error-page>
+	
+	<filter>
+    	<filter-name>PrimeFaces FileUpload Filter</filter-name>
+    	<filter-class>org.primefaces.webapp.filter.FileUploadFilter</filter-class>
+	</filter>
+	<filter-mapping>
+    	<filter-name>PrimeFaces FileUpload Filter</filter-name>
+    	<servlet-name>Faces Servlet</servlet-name>
+	</filter-mapping>
+	
 </web-app>

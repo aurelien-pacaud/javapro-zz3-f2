@@ -6,14 +6,17 @@
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:cc="http://java.sun.com/jsf/composite">
+	xmlns:cc="http://java.sun.com/jsf/composite"
+	xmlns:i="http://isifaces.org/ui">
 	
 <h:head>
 	<title>Login page</title>
 </h:head>
 <h:body>
 	
+	<i:tooltips/>
 	<h:form id="loginForm">
+	
 		<p:dialog header="GoogleDrive" visible="true" resizable="false" draggable="false" closable="false" modal="true">
 			
 			<h:panelGrid columns="1">	    		
@@ -25,20 +28,17 @@
 				<h:outputLabel value="#{msg['login']}" for="username"/>
 				<p:inputText id="username"
 						 	 value="#{loginManagedBean.username}" required="true"
-						 	 label="Username"/>
+						 	 label="Username" title="Enter your login"/>
 		    
 		    	<p:message for="password" />
 
 				<h:outputLabel value="#{msg['password']}" for="password"/>
 				<p:password id="password"
 							value="#{loginManagedBean.password}" required="true"
-							label="Password"/>
-				
-			</h:panelGrid>
+							label="Password" title="Enter your password"/>
 			
-			<f:facet name="footer">
-				<p:commandButton value="Login" action="#{loginManagedBean.login}" update="@form"/>
-			</f:facet>
+			</h:panelGrid>
+			<p:commandButton value="Login" action="#{loginManagedBean.login}" update="@form" title="Submit the form"/>
 		</p:dialog>
 	</h:form>
 
