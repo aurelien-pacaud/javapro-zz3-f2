@@ -1,5 +1,104 @@
 @CHARSET "UTF-8";
 
+.ui-widget, .ui-widget .ui-widget, .ui-dialog {
+    font-size: 90%;
+}
+
+.ui-corner-all {
+	
+	-moz-border-radius    : 0px;
+	-webkit-border-radius : 0px;
+	border-radius         : 0px
+}
+
+body {
+	margin  : 0px;
+	padding : 0px;
+}
+
 .noDisplayTreeNode {
-display: none;	
+	display: none;	
+}
+
+
+/* MenuBar definition.*/
+div#menubar {
+	
+	margin-top       : -16px;
+	font-family      :"Lucida Grande", arial, sans-serif;  	
+	width            : 100%;	
+	background-color : #333;
+	height           : 35px; 	
+	border-bottom    : 1px #000 solid;
+}
+
+div#menubar ul {
+	padding : 0px;
+	maring  : 0px;
+}
+
+div#menubar li {
+	display : inline;
+}
+
+div#menubar a {
+   	font-size        : 12px;
+	text-decoration  : none;
+	float            : left;
+	padding          : 10px;
+	background-color : #333;
+	color            : #FFF;	
+}
+
+div#menubar li a:hover {	
+	background-color : #9B1C26;
+	border-bottom    : 1px #9B1C26 solid;
+}
+
+.search {
+	
+	width            : 100%;
+	height           : 130px;
+	background-color : #eee;
+}
+
+.logo {
+	float : left;
+}
+
+#searchInput {
+	margin-left : 135px;	
+	padding-top : 45px;	
+}
+
+#logout {
+	float : right;
+}
+
+.clear {
+	clear: both;
+}
+
+.driveContent {
+	min-height : 1000px;
+	height     : 300px; 
+	width      : 100%;   
+}
+
+.noBorder {
+	border : none;
+}
+
+.footer {
+	width            : 100%;	
+	background-color : #333;
+	height           : 35px; 
+	color            : #FFF;
+	text-align       : center;
+	padding-top      : 10px;	
+	font-size        : 12px;
+}
+
+.space {
+	padding : 3px;
 }

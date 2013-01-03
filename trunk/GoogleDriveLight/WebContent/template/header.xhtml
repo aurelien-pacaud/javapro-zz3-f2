@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:cc="http://java.sun.com/jsf/composite">
+	
+	<h:head>		
+	</h:head>
+	<h:body>
+		<ui:composition> 					
+			
+			<h:form id="informationMsg">
+				<p:growl id="infosMessages" showDetail="true" autoUpdate="true" binding="#{driveManagedBean.messageGrowl}"/>   
+			</h:form> 
+			
+			<h:form>
+				<div id="menubar">
+					<ul>
+						<li>
+		            		<h:link value="Drive" outcome="main"/>         	
+		        		</li>
+						<li>
+		            		<h:link value="Map" outcome="map"/>       
+		        		</li>
+						<li>
+		            		<h:link value="Reader" outcome="rss"/>       
+		        		</li>
+						<li>
+		            		<h:link value="Other" />          
+		        		</li>
+						
+						<!-- Permet la deconnexion -->
+						<li id="logout">
+							<h:commandLink value="#{msg['labelDeco']} (#{loginManagedBean.username})" action="#{loginManagedBean.logout}"/> 
+						</li>
+					</ul>
+					<div class="clear" />
+				</div>
+			</h:form>
+						
+	    </ui:composition>
+	</h:body>
+</html>

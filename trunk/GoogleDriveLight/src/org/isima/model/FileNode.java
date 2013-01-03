@@ -42,8 +42,8 @@ public class FileNode extends DefaultTreeNode {
 		}		
 	}
 
-	public void deleteFile(TreeNode selectedFile) {
-		getChildren().remove(selectedFile);		
+	public void deleteFile(TreeNode fileNode) {
+		getChildren().remove(fileNode);		
 	}
 	
 	@Override
