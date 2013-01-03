@@ -5,6 +5,8 @@ import java.io.Serializable;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
+import org.isima.ui.utils.MessageBundle;
+
 public class LoginManagedBean implements Serializable  {
 	
 	private static final long serialVersionUID = 1L;
@@ -17,8 +19,13 @@ public class LoginManagedBean implements Serializable  {
 	
 	private boolean connected = false;
 	
+	/***
+	 * Effectue la verification du login afin d'autoriser ou non l'utilisateur à se connecter.
+	 * @return Page vers laquelle l'utilisateur sera redirigé. (Utilisation des règles de navigation)
+	 */
 	public String login() {
 		
+		/* Si toutes les informations sont bonnes, on autorise la connexion.*/
 		if(allowUsername.equals(username) && allwPassword.equals(password)) {
 			
 			connected = true;
@@ -28,7 +35,7 @@ public class LoginManagedBean implements Serializable  {
 		connected = false;
 		
 		FacesContext.getCurrentInstance().addMessage(null, 
-				new FacesMessage("Not authorized !"));		
+				new FacesMessage(MessageBundle.getMessage("connectionNotAllowed")));		
 		
 		return "loginFailed";
 	}
