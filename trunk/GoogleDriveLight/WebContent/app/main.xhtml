@@ -37,7 +37,7 @@
 							        <p:separator /> 
 							        <p:menuitem value="#{msg['labelMenuFileNewDirectory']}" icon="ui-icon-folder-collapsed" oncomplete="dlgNewDir.show()"/>
 								</p:menuButton>
-								<p:commandButton ajax="true" type="button" value="Importer" icon="ui-icon-document" onclick="dlgUpload.show()"/>
+								<p:commandButton ajax="true" type="button" value="#{msg['import']}" icon="ui-icon-document" onclick="dlgUpload.show()"/>
 							</p:toolbarGroup>
 						</p:toolbar>
 					</h:form>
@@ -125,6 +125,7 @@
 
 						            <h:outputText value="#{driveManagedBean.selectedFile.data.name}" /> <br />
 						            <h:outputText value="#{driveManagedBean.selectedFile.data.path}" /> <br />
+						            <h:graphicImage rendered="#{driveManagedBean.selectedFile.data.type.toString() == 'IMG'}" value="#{driveManagedBean.selectedFile.data.path}" />
 				  
 							    </p:dialog>
 							</h:form>  

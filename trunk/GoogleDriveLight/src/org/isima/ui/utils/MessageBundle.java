@@ -1,0 +1,31 @@
+package org.isima.ui.utils;
+
+import java.util.Locale;
+import java.util.ResourceBundle;
+
+import javax.faces.context.FacesContext;
+
+/***
+ * 
+ * Classe permettant de récupérer les messages disponibles dans le bundle pour l'i18. *
+ * 
+ */
+public class MessageBundle {
+
+	/***
+	 * Permet d'obtenir un message pour l'i18 depuis sa clé.
+	 * 
+	 * @param key clé dont nous voulons la valeur associée
+	 * @return Message associé à la clé passée en paramètre depuis les fichiers d'i18.
+	 */
+	public static String getMessage(String key) {
+		
+		/* Récupération des informations sur la locale et le bundle associé à l'application. */
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		String messageBundleName = facesContext.getApplication().getMessageBundle();
+		Locale locale = facesContext.getViewRoot().getLocale();
+		ResourceBundle bundle = ResourceBundle.getBundle(messageBundleName, locale);
+		
+		return bundle.getString(key);
+	}
+}
