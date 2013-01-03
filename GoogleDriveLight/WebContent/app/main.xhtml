@@ -58,7 +58,7 @@
 				                  	   selectionMode="single"
 				                  	   styleClass="noBorder" >
 				                  	   
-				                   <p:ajax event="select" listener="#{driveManagedBean.onNodeSelect}" update=":formTable :formDetails" />	   
+				                   <p:ajax event="select" listener="#{driveManagedBean.onNodeSelect}" update=":formTable" />	   
 							       
 						           <p:treeNode rendered="#{node.directory}" styleClass="#{!node.directory ? 'noDisplayTreeNode' : ''}">
 						             <h:graphicImage alt="folder" value="/resources/images/folder.png" /> <h:outputText value=" #{node}" />
@@ -68,34 +68,7 @@
 							</h:form>				
 					    </p:layoutUnit>
 					    
-					    <!-- Détails d'un fichier (droite) -->
-					    <p:layoutUnit position="east" size="330" header="#{msg['details']}" styleClass="noBorder">
-						    <h:form id="formDetails">
-							   <p:dataTable id="table" var="file" value="#{driveManagedBean.selectedFile}" rendered="#{driveManagedBean.selectedFile != null}" styleClass="noBorder">
-							        <p:column>
-							            <f:facet name="header">
-							            	File Name
-							            </f:facet>
-							            <h:outputText id="file" value="#{file.data.name}"/>			            
-							        </p:column>
-							        
-							        <p:column>
-							            <f:facet name="header">
-							            	Path
-							            </f:facet>
-							            <h:outputText value="#{file.data.path}"/>
-							        </p:column>
-							        
-							        <p:column>
-							            <f:facet name="header">
-							            	Size
-							            </f:facet>
-							            <h:outputText value="#{file.data.size}"/>
-							        </p:column>
-								</p:dataTable>
-								<h:outputText value="#{msg['fileDetails']}" rendered="#{driveManagedBean.selectedFile == null}"></h:outputText>
-							</h:form>				
-					    </p:layoutUnit>
+					    
 					    
 					    <!-- Détails d'un répertoire (centre) -->
 						<p:layoutUnit position="center" styleClass="noBorder">
@@ -108,7 +81,7 @@
 							    </p:contextMenu> 
 							    
 						    
-						    	<p:breadCrumb model="#{driveManagedBean.breadCrumb}" rendered="#{driveManagedBean.pattern == null}" />
+						    	<p:breadCrumb styleClass="toolbar" model="#{driveManagedBean.breadCrumb}" rendered="#{driveManagedBean.pattern == null}" />
 						    	<div class="space" />
 						    							    		    
 						    	<!-- Définition de la table -->			  
@@ -117,7 +90,7 @@
 							                 selectionMode="single" rowKey="#{file.data.path}"
 							                 styleClass="noBorder">		        
 							       			       	
-							        <p:ajax event="rowSelect" listener="#{driveManagedBean.onRowSelect}" update=":formTable :formTree" />
+							        <p:ajax event="rowSelect" listener="#{driveManagedBean.onRowSelect}" update=":formTable :formTree" oncomplete="dlgFileDetails.show()"/>
 							        			        
 							        <p:column sortBy="#{file.data.name}">
 							            <f:facet name="header">
@@ -147,6 +120,13 @@
 							            <h:outputText value="#{file.data.lastModified}"><f:convertDateTime dateStyle="short" type="both" /> </h:outputText>
 							        </p:column>			        
 							    </p:dataTable>
+							    
+							    <p:dialog rendered="#{driveManagedBean.selectedFile != null}" id="fileDetails" header="#{msg['fileDetails']}" widgetVar="dlgFileDetails" draggable="false" resizable="false">
+
+						            <h:outputText value="#{driveManagedBean.selectedFile.data.name}" /> <br />
+						            <h:outputText value="#{driveManagedBean.selectedFile.data.path}" /> <br />
+				  
+							    </p:dialog>
 							</h:form>  
 									
 					    </p:layoutUnit>
@@ -190,7 +170,6 @@
 						<p:growl id="messages" showDetail="true" />
 					</h:form>
 			    </p:dialog>  
-    		
     		
     		
     		</ui:define>
