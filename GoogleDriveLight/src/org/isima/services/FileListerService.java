@@ -71,7 +71,10 @@ public class FileListerService implements IFileService, Serializable {
 		
 		File file = new File(((FileInfos)fileNode.getData()).getPath());
 		
-		FileUtils.deleteDirectory(file);
+		if (file.isDirectory())
+			FileUtils.deleteDirectory(file);
+		else
+			file.delete();
 		
 		selectedNode.deleteFile(fileNode);
 	}
@@ -93,16 +96,23 @@ public class FileListerService implements IFileService, Serializable {
 	@Override
 	public void copyFile(UploadedFile file, String destFilename) throws IOException {
 
-	    InputStream input = file.getInputstream();
-	    OutputStream output = new FileOutputStream(new File(destFilename));
+	    InputStream input = file.getInputstream();	    
 
-	    try {
-	        IOUtils.copy(input, output);
-	    } finally {
-	        IOUtils.closeQuietly(input);
-	        IOUtils.closeQuietly(output);
-	    }
-		
-		selectedNode.appendChild(new FileInfos(destFilename));
+    	File f = new File(destFilename);
+    	
+    	if (!f.exists()) {
+    		
+    		OutputStream output = new FileOutputStream(f);
+
+    		try {	        
+	    	
+	    		IOUtils.copy(input, output);	    		
+	    		selectedNode.appendChild(new FileInfos(destFilename));		
+	    		
+    		} finally {
+    			IOUtils.closeQuietly(input);
+    			IOUtils.closeQuietly(output);
+    		}
+    	}
 	}
 }

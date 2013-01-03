@@ -5,9 +5,11 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -61,7 +63,11 @@ public class DriveManagedBean implements Serializable, ActionListener {
 	private String dirname;
 	
 	private String pattern;
+
+	private ResourceBundle messagesBundle;
 	
+	private UIComponent messageGrowl;	
+		
 	/* Methode appelée lorsque que l'objet est complétement construit. */
 	@PostConstruct
 	public void init() {
@@ -80,6 +86,8 @@ public class DriveManagedBean implements Serializable, ActionListener {
 		model = fileService.getTree(userHome);	
 				
 		setSelectedNode(model);
+				
+		messagesBundle = ResourceBundle.getBundle("messages");
 	}
 	
 	public FileNode getModel() {
@@ -183,7 +191,10 @@ public class DriveManagedBean implements Serializable, ActionListener {
 		
 		String path = String.format("%s/%s", currentDirectory, filename);
 		
-		fileService.createNewFile(path);
+		fileService.createNewFile(path);		
+
+		FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, messagesBundle.getString("succesful"), String.format(messagesBundle.getString("fileCreated")));
+		FacesContext.getCurrentInstance().addMessage(messageGrowl.getClientId(), msg);
 	}
 	
 	/**
@@ -194,7 +205,6 @@ public class DriveManagedBean implements Serializable, ActionListener {
 		try {
 			fileService.deleteFile(selectedFile);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -205,9 +215,10 @@ public class DriveManagedBean implements Serializable, ActionListener {
 	public void deleteDirectory () {
 		
 		try {
-			fileService.deleteFile(selectedNode);
+			
+			//setSelectedNode((FileNode) selectedNode.getParent());
+			fileService.deleteFile(selectedNode);			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -217,10 +228,11 @@ public class DriveManagedBean implements Serializable, ActionListener {
 	 */
 	public void createDirectory () {
 		
-		String path = String.format("%s/%s", currentDirectory, dirname);
-		System.out.print(path);
-		
+		String path = String.format("%s/%s", currentDirectory, dirname);		
 		fileService.createFolder(path);
+		
+		FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, messagesBundle.getString("succesful"), String.format(messagesBundle.getString("fileCreated")));
+		FacesContext.getCurrentInstance().addMessage(messageGrowl.getClientId(), msg);		
 	}
 
 	public String getPattern() {
@@ -244,19 +256,16 @@ public class DriveManagedBean implements Serializable, ActionListener {
 		} catch (IOException e) {
 			
 			e.printStackTrace();
-		}
-		FacesMessage msg = new FacesMessage("Succesful", event.getFile().getFileName() + " is uploaded.");
+		}		
+		
+		FacesMessage msg = new FacesMessage(messagesBundle.getString("succesful"), String.format(messagesBundle.getString("uploadSuccesful"), event.getFile().getFileName()));
 		FacesContext.getCurrentInstance().addMessage("messages", msg);
 	}
 
 	@Override
 	public void processAction(ActionEvent event) throws AbortProcessingException {
-	
-		System.out.println(event.getSource().getClass());
-		
-		if(event.getSource().getClass() == MenuItem.class) {
 			
-			System.out.println("Item click");
+		if(event.getSource().getClass() == MenuItem.class) {
 			
             MenuItem sourceItem = (MenuItem) event.getSource();
             
@@ -266,5 +275,13 @@ public class DriveManagedBean implements Serializable, ActionListener {
 			setSelectedNode(node);
 			selectedFile = null;
        }		
+	}
+
+	public UIComponent getmessageGrowl() {
+		return messageGrowl;
+	}
+
+	public void setmessageGrowl(UIComponent component) {
+		this.messageGrowl = component;
 	}
 }

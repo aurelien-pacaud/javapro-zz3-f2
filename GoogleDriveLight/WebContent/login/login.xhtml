@@ -9,38 +9,36 @@
 	xmlns:cc="http://java.sun.com/jsf/composite"
 	xmlns:i="http://isifaces.org/ui">
 	
-<h:head>
-	<title>Login page</title>
-</h:head>
-<h:body>
-	
-	<i:tooltips/>
-	<h:form id="loginForm">
-	
-		<p:dialog header="GoogleDrive" visible="true" resizable="false" draggable="false" closable="false" modal="true">
-			
-			<h:panelGrid columns="1">	    		
-			
-				<p:messages globalOnly="true"/>
-	    
-		    	<p:message for="username" />
-		    	
-				<h:outputLabel value="#{msg['login']}" for="username"/>
-				<p:inputText id="username"
-						 	 value="#{loginManagedBean.username}" required="true"
-						 	 label="Username" title="Enter your login"/>
+	<h:head>
+		<title>Google Drive Light -- Login page</title>
+	</h:head>
+	<h:body>			
+		<i:tooltips/>
+		<h:form id="loginForm">
+		
+			<p:dialog header="GoogleDrive" visible="true" resizable="false" draggable="false" closable="false" modal="true">
+				
+				<h:panelGrid columns="1">	    		
+				
+					<p:messages globalOnly="true"/>
 		    
-		    	<p:message for="password" />
-
-				<h:outputLabel value="#{msg['password']}" for="password"/>
-				<p:password id="password"
-							value="#{loginManagedBean.password}" required="true"
-							label="Password" title="Enter your password"/>
-			
-			</h:panelGrid>
-			<p:commandButton value="Login" action="#{loginManagedBean.login}" update="@form" title="Submit the form"/>
-		</p:dialog>
-	</h:form>
-
-</h:body>
+			    	<p:message for="username" />
+			    	
+					<h:outputLabel value="#{msg['login']}" for="username"/>
+					<p:inputText id="username"
+							 	 value="#{loginManagedBean.username}" required="true"
+							 	 label="Username" title="Enter your login"/>
+			    
+			    	<p:message for="password" />
+	
+					<h:outputLabel value="#{msg['password']}" for="password"/>
+					<p:password id="password"
+								value="#{loginManagedBean.password}" required="true"
+								label="Password" title="Enter your password"/>
+				
+				</h:panelGrid>
+				<p:commandButton value="Login" action="#{loginManagedBean.login}" update="@form" title="Submit the form"/>
+			</p:dialog>
+		</h:form>
+	</h:body>
 </html>

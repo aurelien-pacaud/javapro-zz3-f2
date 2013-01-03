@@ -26,6 +26,7 @@ public class LoginManagedBean implements Serializable  {
 		}
 		
 		connected = false;
+		
 		FacesContext.getCurrentInstance().addMessage(null, 
 				new FacesMessage("Not authorized !"));		
 		
