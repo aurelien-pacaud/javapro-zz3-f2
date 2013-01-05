@@ -25,7 +25,7 @@ public class FileLister {
 		
 			for (File file : filesList) {			
 					
-				FileNode node = parent.appendChild(new FileInfos(file.getAbsolutePath()));				
+				FileNode node = parent.appendChild(new FileInfos(file.getAbsolutePath()));		
 				files.add(node);
 			}
 		}
@@ -41,7 +41,7 @@ public class FileLister {
 	 */
 	static public FileNode getTree(String path) {
 				
-		final FileNode root = new FileNode(new FileInfos(MessageBundle.getMessage("driveName"), path), null);				
+		final FileNode root = new FileNode("drive", new FileInfos(MessageBundle.getMessage("driveName"), path), null);				
 		FileLister.buildTree(path, root);		
 	
 		return root;

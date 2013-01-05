@@ -49,14 +49,23 @@
 						<p:layoutUnit position="west" size="330" header="#{msg['drive']}" styleClass="noBorder">
 						    <h:form id="formTree">
 						    
-						       <!-- Contextmenu de l'arbre du drive -->
-								<p:contextMenu for="tree"> 
+						       <!-- Contextmenu de l'arbre du drive -->							    
+							    <p:contextMenu for="tree" nodeType="drive"> 
+									<p:submenu label="#{msg['create']}" icon="ui-icon-plus">
+										<ui:insert name="menu" >
+		  									<ui:include src="/template/drive/creationMenu.xhtml" />
+										</ui:insert>
+									</p:submenu> 
+							    </p:contextMenu> 
+						       
+								<p:contextMenu for="tree" nodeType="default"> 
 									<p:submenu label="#{msg['create']}" icon="ui-icon-plus">
 										<ui:insert name="menu" >
 		  									<ui:include src="/template/drive/creationMenu.xhtml" />
 										</ui:insert>
 									</p:submenu>
-							      	<p:menuitem value="#{msg['delete']}" update=":formTable :formTree :formBreadCrumb" icon="ui-icon-trash" action="#{driveManagedBean.deleteDirectory}"/>  
+							      	<p:menuitem id="deleteTree" value="#{msg['delete']}" update=":formTable :formTree :formBreadCrumb" 
+							      				icon="ui-icon-trash" action="#{driveManagedBean.deleteDirectory}"/>  
 							    </p:contextMenu> 
 						    	
 							   <p:tree value="#{driveManagedBean.model}" var="node" dynamic="true" cache="true" 
@@ -67,7 +76,11 @@
 				                  	   
 				                   <p:ajax event="select" listener="#{driveManagedBean.onNodeSelect}" update=":formTable :formBreadCrumb :toolbar :formDetails" />	   
 							       
-						           <p:treeNode rendered="#{node.directory}" styleClass="#{!node.directory ? 'noDisplayTreeNode' : ''}">
+						           <p:treeNode rendered="#{node.directory}" type="default" styleClass="#{!node.directory ? 'noDisplayTreeNode' : ''}">
+						             <h:graphicImage alt="folder" value="/resources/images/folder.png" /> <h:outputText value=" #{node}" />
+						       	   </p:treeNode>
+						       	   
+						       	   <p:treeNode rendered="#{node.directory}" type="drive" styleClass="#{!node.directory ? 'noDisplayTreeNode' : ''}">
 						             <h:graphicImage alt="folder" value="/resources/images/folder.png" /> <h:outputText value=" #{node}" />
 						       	   </p:treeNode>
 				

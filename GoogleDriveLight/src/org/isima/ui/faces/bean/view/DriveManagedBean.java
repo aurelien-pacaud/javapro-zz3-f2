@@ -80,7 +80,7 @@ public class DriveManagedBean implements Serializable, ActionListener {
 		
 		currentDirectory = userHome;
 		
-		model = new FileNode(new FileInfos("ROOT"), null);
+		model = new FileNode(new FileInfos(""), null);
 		fileService.getTree(userHome).setParent(model);	
 				
 		setSelectedNode(model.getChildren().get(0));

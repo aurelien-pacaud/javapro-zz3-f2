@@ -17,6 +17,10 @@ public class FileNode extends DefaultTreeNode {
 		super(data, parent);
 	}
 	
+	public FileNode(String type, Object data, TreeNode parent) {
+		super(type, data, parent);
+	}
+	
 	public FileNode() {
 		super();
 	}
@@ -90,7 +94,7 @@ public class FileNode extends DefaultTreeNode {
 
 	public FileNode appendChild(FileInfos file) {
 		
-		FileNode node = new FileNode(file, this);
+		FileNode node = new FileNode("default", file, this);
 		
 		/* Tri des fils afin de conserver l'ordre lexicographique.*/
 		Collections.sort(getChildren(), new Comparator<TreeNode>() {
