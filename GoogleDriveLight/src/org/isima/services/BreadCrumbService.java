@@ -12,21 +12,25 @@ public class BreadCrumbService {
 	public MenuModel breadCrumbFromNode(DriveManagedBean driveManagedBean, FileNode selectedNode) {
 		
 		MenuModel breadCrum = new DefaultMenuModel();
-		FileNode currentNode = selectedNode;
 		
-		while (currentNode.getParent() != null) {
+		if (selectedNode != null) {
+		
+			FileNode currentNode = selectedNode;
 			
-			MenuItem menuItem = new MenuItem();
-			
-			menuItem.setValue(((FileInfos)currentNode.getData()).getName());
-			menuItem.addActionListener(driveManagedBean);
-			menuItem.getAttributes().put("node", currentNode);
-			menuItem.setAjax(true);
-			menuItem.setUpdate(":formTable :formTree :formBreadCrumb");
-			
-			breadCrum.getContents().add(0, menuItem);
-
-			currentNode = (FileNode) currentNode.getParent();
+			while (currentNode.getParent() != null) {
+				
+				MenuItem menuItem = new MenuItem();
+				
+				menuItem.setValue(((FileInfos)currentNode.getData()).getName());
+				menuItem.addActionListener(driveManagedBean);
+				menuItem.getAttributes().put("node", currentNode);
+				menuItem.setAjax(true);
+				menuItem.setUpdate(":formTable :formTree :formBreadCrumb");
+				
+				breadCrum.getContents().add(0, menuItem);
+	
+				currentNode = (FileNode) currentNode.getParent();
+			}
 		}
 				
 		return breadCrum;

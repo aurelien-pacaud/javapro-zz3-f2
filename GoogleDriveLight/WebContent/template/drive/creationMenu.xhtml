@@ -10,11 +10,11 @@
 
 	<h:body>
 		<ui:composition>  
-			<p:menuitem value="#{msg['newTextFile']}" oncomplete="dlgNewTxtFile.show()" icon="ui-icon-document"/>
-	        <p:menuitem value="#{msg['newPresentationFile']}" icon="ui-icon-contact"/>
-	        <p:menuitem value="#{msg['newDrawFile']}" icon="ui-icon-image"/>
+			<p:menuitem value="#{msg['textFile']}" oncomplete="dlgNewTxtFile.show()" icon="ui-icon-document"/>
+	        <p:menuitem value="#{msg['presentationFile']}" icon="ui-icon-contact"/>
+	        <p:menuitem value="#{msg['drawFile']}" icon="ui-icon-image"/>
 	        <p:separator /> 
-	        <p:menuitem value="#{msg['newDirectory']}" icon="ui-icon-folder-collapsed" oncomplete="dlgNewDir.show()"/>
+	        <p:menuitem value="#{msg['directory']}" icon="ui-icon-folder-collapsed" oncomplete="dlgNewDir.show()"/>
 	    </ui:composition>
 	</h:body>
 </html>
