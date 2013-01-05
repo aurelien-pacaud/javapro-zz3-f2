@@ -13,6 +13,7 @@ import java.io.Serializable;
 import org.isima.model.FileInfos;
 import org.isima.model.FileNode;
 import org.isima.ui.utils.FileLister;
+import org.isima.ui.utils.FilePathFilter;
 import org.primefaces.model.TreeNode;
 import org.primefaces.model.UploadedFile;
 
