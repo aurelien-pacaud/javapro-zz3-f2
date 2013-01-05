@@ -77,7 +77,7 @@ public class FileInfos implements Serializable {
 						
 			if (dotPos != -1) {
 			
-				String ext = name.substring(dotPos);
+				String ext = name.substring(dotPos).toString().toLowerCase();
 				
 				if (types.containsKey(ext))
 					type = types.get(ext);

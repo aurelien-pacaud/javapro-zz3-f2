@@ -3,6 +3,7 @@ package org.isima.ui.utils;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
 /***
@@ -27,5 +28,21 @@ public class MessageBundle {
 		ResourceBundle bundle = ResourceBundle.getBundle(messageBundleName, locale);
 		
 		return bundle.getString(key);
+	}
+	
+	public static FacesMessage displayInformationMsg(String content) {
+		
+		FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, MessageBundle.getMessage("successful"), content);
+		FacesContext.getCurrentInstance().addMessage(null, msg);
+		
+		return msg;
+	}
+	
+	public static FacesMessage displayErrorMsg(String content) {
+		
+		FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, MessageBundle.getMessage("error"), content);
+		FacesContext.getCurrentInstance().addMessage(null, msg);
+		
+		return msg;
 	}
 }

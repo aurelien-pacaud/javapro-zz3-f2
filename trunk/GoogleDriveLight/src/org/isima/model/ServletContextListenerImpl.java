@@ -1,5 +1,7 @@
 package org.isima.model;
 
+import java.io.File;
+
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
@@ -30,7 +32,15 @@ public class ServletContextListenerImpl implements ServletContextListener {
 		try {
 			
 			injector.bind(IFileService.class).annotatedWith(FileLister.class).to(FileListerService.class);
-			injector.bind(String.class).annotatedWith(InjectedValue.class).to("/home/aurelien/TestJavaProDrive/");
+			
+			/* TODO A modifier! Version de test uniquement. */
+			String folder = String.format("%s/%s", System.getProperty("java.io.tmpdir"), "TestJavaProDrive");
+			File file = new File(folder);
+			
+			if (!file.exists())
+				file.mkdir();
+			
+			injector.bind(String.class).annotatedWith(InjectedValue.class).to(folder);
 			
 		} catch (MultipleBindException e) {
 			e.printStackTrace();

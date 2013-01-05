@@ -2,6 +2,8 @@ package org.isima.model;
 
 import java.io.FileFilter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.primefaces.model.DefaultTreeNode;
@@ -17,6 +19,15 @@ public class FileNode extends DefaultTreeNode {
 	
 	public FileNode() {
 		super();
+	}
+	
+	public TreeNode searchFile(FileFilter file) {
+		
+		List<TreeNode> matchFiles = new ArrayList<TreeNode>();
+		
+		_search(this, file, matchFiles);
+		
+		return matchFiles.get(0);
 	}
 	
 	public List<TreeNode> search(FileFilter file) {
@@ -36,16 +47,24 @@ public class FileNode extends DefaultTreeNode {
 			
 			if (file.accept(fileInfos.getFile())) {
 			
-				list.add(new DefaultTreeNode(fileInfos, null));				
+				list.add(childnode);				
 			}
 			_search(childnode, file, list);
 		}		
 	}
 
-	public void deleteFile(TreeNode fileNode) {
-		getChildren().remove(fileNode);		
+	public void deleteChildNode(TreeNode fileNode) {
+		
+		/* Supprime tous les fils du noeuds.*/
+		fileNode.getChildren().clear();
+		
+		/* Supprime le noeud. */
+        getChildren().remove(fileNode);
+        
+        fileNode.setParent(null);
+        fileNode = null;
 	}
-	
+		
 	@Override
 	public boolean isLeaf() {
 		
@@ -69,7 +88,35 @@ public class FileNode extends DefaultTreeNode {
 		return isLeaf;		
 	}
 
-	public void appendChild(FileInfos file) {
-		new FileNode(file, this);		
+	public FileNode appendChild(FileInfos file) {
+		
+		FileNode node = new FileNode(file, this);
+		
+		/* Tri des fils afin de conserver l'ordre lexicographique.*/
+		Collections.sort(getChildren(), new Comparator<TreeNode>() {
+			
+			@Override
+			public int compare(TreeNode t1, TreeNode t2) {
+				
+				FileInfos f1 = (FileInfos) t1.getData();
+				FileInfos f2 = (FileInfos) t2.getData();
+				
+				int ret = 0;
+				
+				if ((f1.isDirectory() && f2.isDirectory()) ||
+					(f1.isFile() && f2.isFile()))
+					ret = f1.getName().compareToIgnoreCase(f2.getName());
+				else
+					if (f1.isDirectory() && f2.isFile())
+						ret = -1;
+					else if (f1.isFile() && f2.isDirectory())
+						ret = 1;
+
+				/* Comparaison des noms de fichiers. */
+				return ret;
+			}
+		});
+		
+		return node;
 	}
 }

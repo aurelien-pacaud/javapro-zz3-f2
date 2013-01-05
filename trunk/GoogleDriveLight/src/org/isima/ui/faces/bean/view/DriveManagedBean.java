@@ -1,26 +1,24 @@
 package org.isima.ui.faces.bean.view;
 
-import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ActionListener;
 
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.isima.annotation.FileLister;
 import org.isima.model.FileInfos;
 import org.isima.model.FileNode;
 import org.isima.services.BreadCrumbService;
 import org.isima.services.IFileService;
 import org.isima.singleton.GoogleDriveLightInjector;
+import org.isima.ui.utils.MessageBundle;
 import org.primefaces.component.menuitem.MenuItem;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.NodeSelectEvent;
@@ -30,6 +28,7 @@ import org.primefaces.model.TreeNode;
 
 import fr.isima.annotation.Inject;
 import fr.isima.annotation.InjectedValue;
+import fr.isima.annotation.Singleton;
 import fr.isima.exception.MultipleBindException;
 import fr.isima.exception.NotNullBindingException;
 import fr.isima.injector.Injector;
@@ -45,7 +44,7 @@ public class DriveManagedBean implements Serializable, ActionListener {
 	private List<TreeNode> dirContent;
 	
 	/* Sous model représentant la hérarchie sélectionnée. */
-	private FileNode selectedNode;
+	private TreeNode selectedNode;
 	
 	@Inject
 	@InjectedValue
@@ -53,6 +52,7 @@ public class DriveManagedBean implements Serializable, ActionListener {
 	
 	@Inject
 	@FileLister
+	@Singleton
 	private IFileService fileService;
 	
 	private String currentDirectory;
@@ -63,11 +63,7 @@ public class DriveManagedBean implements Serializable, ActionListener {
 	private String dirname;
 	
 	private String pattern;
-
-	private ResourceBundle messagesBundle;
-	
-	private UIComponent messageGrowl;	
-		
+			
 	/* Methode appelée lorsque que l'objet est complétement construit. */
 	@PostConstruct
 	public void init() {
@@ -83,11 +79,11 @@ public class DriveManagedBean implements Serializable, ActionListener {
 		}		
 		
 		currentDirectory = userHome;
-		model = fileService.getTree(userHome);	
+		
+		model = new FileNode(new FileInfos("ROOT"), null);
+		fileService.getTree(userHome).setParent(model);	
 				
-		setSelectedNode(model);
-				
-		messagesBundle = ResourceBundle.getBundle("messages");
+		setSelectedNode(model.getChildren().get(0));
 	}
 	
 	public FileNode getModel() {
@@ -95,7 +91,7 @@ public class DriveManagedBean implements Serializable, ActionListener {
 		return model;
 	}
 	
-	public FileNode getSelectedNode() {
+	public TreeNode getSelectedNode() {
 		
 		return selectedNode;
 	}
@@ -107,20 +103,16 @@ public class DriveManagedBean implements Serializable, ActionListener {
 	
 	public void search() {
 		
-		dirContent = model.search(new FileFilter() {
-			
-			@Override
-			public boolean accept(File file) {
-				
-				return (file.getName().matches(pattern.replace("*", ".*")) && file.isFile());
-			}
-		});
+		dirContent = model.search(new WildcardFileFilter(pattern)); 
 		
 		currentDirectory = pattern;
 	}
 
-	public void setSelectedNode(FileNode selectedNode) {
-				
+	public void setSelectedNode(TreeNode selectedNode) {
+		
+		if (this.selectedNode != null)
+			this.selectedNode.setSelected(false);
+		
 		this.selectedNode = selectedNode;
 		
 		dirContent = selectedNode.getChildren();
@@ -133,7 +125,9 @@ public class DriveManagedBean implements Serializable, ActionListener {
 		
 		selectedNode.setSelected(true);
 		
-		fileService.setSelectedNode(selectedNode);
+		fileService.setCurrentNode((FileNode)selectedNode);
+		pattern = null;
+		selectedFile = null;
 	}
 	
 	public void onNodeSelect(NodeSelectEvent event) {  
@@ -148,7 +142,9 @@ public class DriveManagedBean implements Serializable, ActionListener {
 		
 		if (file.isDirectory()) {
 			
-			selectedNode.setSelected(false);
+			if (selectedNode != null)
+				selectedNode.setSelected(false);
+			
 			setSelectedNode(node);
 			selectedFile = null;			
 		}
@@ -171,39 +167,37 @@ public class DriveManagedBean implements Serializable, ActionListener {
 		return filename;
 	}
 	
-	public void setFilename (String filename) {
+	public void setFilename(String filename) {
 		this.filename = filename;
 	}
 	
-	public void setDirname (String dirname)
+	public void setDirname(String dirname)
 	{
 		this.dirname = dirname;
 	}
 	
-	public String getDirname () {
+	public String getDirname() {
 		return dirname;
 	}
 	
-	/**
-	 * Permet la creation d'un fichier depuis l'interface du Drive
-	 */
-	public void createFile () {
-		
-		String path = String.format("%s/%s", currentDirectory, filename);
-		
-		fileService.createNewFile(path);		
-
-		FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, messagesBundle.getString("succesful"), String.format(messagesBundle.getString("fileCreated")));
-		FacesContext.getCurrentInstance().addMessage(messageGrowl.getClientId(), msg);
-	}
 	
 	/**
 	 * Permet la suppression d'un fichier depuis l'interface du Drive
 	 */
-	public void deleteFile () {
+	public void deleteFile() {
 		
-		try {
-			fileService.deleteFile(selectedFile);
+		FileInfos fileInfos = (FileInfos) selectedFile.getData();
+		
+		try {			
+			if (fileInfos.isFile())
+				fileService.deleteFile(fileInfos.getPath());
+			else {
+				
+				setSelectedNode(selectedFile);
+				deleteDirectory();
+			}
+				
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -212,27 +206,48 @@ public class DriveManagedBean implements Serializable, ActionListener {
 	/**
 	 * Permet la suppression d'un répertoire depuis l'interface du Drive
 	 */
-	public void deleteDirectory () {
-		
+	public void deleteDirectory() {
+				
 		try {
 			
-			//setSelectedNode((FileNode) selectedNode.getParent());
-			fileService.deleteFile(selectedNode);			
+			FileNode parent = (FileNode) selectedNode.getParent();
+			fileService.deleteFolder(((FileInfos)selectedNode.getData()).getPath());		
+			setSelectedNode(parent);
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	/**
+	 * Permet la creation d'un fichier depuis l'interface du Drive
+	 */
+	public void createFile() {
+		
+		String path = String.format("%s/%s", currentDirectory, filename);		
+		
+		if (fileService.createNewFile(path))			
+			MessageBundle.displayInformationMsg(MessageBundle.getMessage("fileCreated"));
+		else
+			MessageBundle.displayInformationMsg(MessageBundle.getMessage("fileNotCreated"));
+	}
+	
+	/**
 	 * Permet la création d'un nouveau répertoire depuis l'interface du Drive
 	 */
-	public void createDirectory () {
+	public void createDirectory() {
 		
-		String path = String.format("%s/%s", currentDirectory, dirname);		
-		fileService.createFolder(path);
+		String path = String.format("%s/%s", currentDirectory, dirname);			
 		
-		FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, messagesBundle.getString("succesful"), String.format(messagesBundle.getString("fileCreated")));
-		FacesContext.getCurrentInstance().addMessage(messageGrowl.getClientId(), msg);		
+		if (fileService.createFolder(path)) {
+			
+			setSelectedNode(fileService.getCurrentNode());
+			selectedNode.getParent().setExpanded(true);			
+
+			MessageBundle.displayInformationMsg(MessageBundle.getMessage("folderCreated"));			
+		}	
+		else
+			MessageBundle.displayErrorMsg(MessageBundle.getMessage("folderNotCreated"));			
 	}
 
 	public String getPattern() {
@@ -240,12 +255,19 @@ public class DriveManagedBean implements Serializable, ActionListener {
 	}
 
 	public void setPattern(String pattern) {
+		
 		this.pattern = pattern;
+		
+		/* Suppression des informations enregistrées pour avoir un affichage neutre. */
+		selectedNode.setSelected(false);
+		
+		selectedFile = null;
+		selectedNode = null;		
 	}
 
 	public MenuModel getBreadCrumb() {		
 		
-		return new BreadCrumbService().breadCrumbFromNode(this, selectedNode);
+		return new BreadCrumbService().breadCrumbFromNode(this, (FileNode)selectedNode);
 	}
 	
 	public void handleFileUpload(FileUploadEvent event) {
@@ -258,13 +280,13 @@ public class DriveManagedBean implements Serializable, ActionListener {
 			e.printStackTrace();
 		}		
 		
-		FacesMessage msg = new FacesMessage(messagesBundle.getString("succesful"), String.format(messagesBundle.getString("uploadSuccesful"), event.getFile().getFileName()));
-		FacesContext.getCurrentInstance().addMessage("messages", msg);
+		FacesMessage msg = new FacesMessage(MessageBundle.getMessage("successful"), String.format(MessageBundle.getMessage("uploadSuccesful"), event.getFile().getFileName()));
+		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
 	@Override
 	public void processAction(ActionEvent event) throws AbortProcessingException {
-			
+		
 		if(event.getSource().getClass() == MenuItem.class) {
 			
             MenuItem sourceItem = (MenuItem) event.getSource();
@@ -275,13 +297,5 @@ public class DriveManagedBean implements Serializable, ActionListener {
 			setSelectedNode(node);
 			selectedFile = null;
        }		
-	}
-
-	public UIComponent getmessageGrowl() {
-		return messageGrowl;
-	}
-
-	public void setmessageGrowl(UIComponent component) {
-		this.messageGrowl = component;
 	}
 }
