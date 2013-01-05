@@ -32,6 +32,10 @@ public class ServletContextListenerImpl implements ServletContextListener {
 		try {
 			
 			injector.bind(IFileService.class).annotatedWith(FileLister.class).to(FileListerService.class);
+<<<<<<< .mine
+			injector.bind(String.class).annotatedWith(InjectedValue.class).to("/home/david/Tests/");
+=======
+>>>>>>> .r36
 			
 			/* TODO A modifier! Version de test uniquement. */
 			String folder = String.format("%s/%s", System.getProperty("java.io.tmpdir"), "TestJavaProDrive");
