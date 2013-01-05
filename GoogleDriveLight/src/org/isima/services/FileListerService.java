@@ -4,17 +4,16 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
-import java.util.List;
 
 import org.isima.model.FileInfos;
 import org.isima.model.FileNode;
 import org.isima.ui.utils.FileLister;
+import org.isima.ui.utils.FilePathFilter;
 import org.primefaces.model.TreeNode;
 import org.primefaces.model.UploadedFile;
 
@@ -23,74 +22,123 @@ public class FileListerService implements IFileService, Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private FileNode model;
-	private FileNode selectedNode;
-	
-	public FileListerService() {
-		
-		model = new FileNode();
-	}
+	private FileNode currentNode;
 	
 	@Override
 	public FileNode getTree(final String path) {
-		
-		return FileLister.getTree(path);
-	}
 
-	@Override
-	public List<TreeNode> getFiles(final String path) {
+		model = (FileNode) FileLister.getTree(path);
 		
-		List<TreeNode> list = model.search(new FileFilter() {
-			
-			@Override
-			public boolean accept(File file) {
-				return file.getPath().equals(path);
-			}
-		});
-				
-		return list.get(0).getChildren();
+		currentNode = model;
+		
+		return model;
 	}
 	
 	@Override
-	public void createNewFile(String filename) {
+	public void setCurrentNode(FileNode node) {
+		this.currentNode = node;		
+	}
+	
+	@Override
+	public FileNode getCurrentNode() {
+		return currentNode;
+	}
+	
+	/***
+	 * 
+	 * Méthode permettant de supprimer un dossier dans le drive de l'utilisateur.
+	 * 
+	 * @param path Chemin vers le dossier que l'on veut supprimer.
+	 * 
+	 * @return True si le dossier a été supprimé. Faux sinon.
+	 */
+	@Override
+	public boolean deleteFolder(String path) throws IOException {
+		
+		FileUtils.deleteDirectory(new File(path));					
+
+		((FileNode) currentNode.getParent()).deleteChildNode(currentNode);
+		
+		return true;
+	}
+	
+	/***
+	 * 
+	 * Méthode permettant de supprimer un fichier dans le drive de l'utilisateur.
+	 * 
+	 * @param path Chemin vers le fichier que l'on veut supprimer.
+	 * 
+	 * @return True si le fichier a été supprimé. Faux sinon.
+	 */
+	@Override
+	public boolean deleteFile(String path) throws IOException {
+		
+		File file = new File(path);
+		boolean ret = false;
+		
+		ret = file.delete();
+		
+		/* Si la suppression du fichier est faite. */
+		if (ret) {
+			
+			/* On recherche le noeud associé dans le model. */
+			TreeNode node = currentNode.searchFile(new FilePathFilter(path));			
+			currentNode.deleteChildNode(node);
+		}
+		
+		return ret;
+	}
+
+	/***
+	 * 
+	 * Méthode permettant de créer un fichier dans le drive de l'utilisateur.
+	 * 
+	 * @param filename Nom du fichier que l'on veut créer.
+	 * 
+	 * @return True si le fichier a été créé. Faux sinon.
+	 */
+	@Override
+	public boolean createNewFile(String filename) {
 		
 		File file = new File(filename);
+		boolean ret = false;
 		
 		try {
 			
-			file.createNewFile();
-			selectedNode.appendChild(new FileInfos(filename));
+			ret = file.createNewFile();
+			
+			if (ret)
+				currentNode.appendChild(new FileInfos(filename));
 		} 
 		catch (IOException e) {
 			
-			e.printStackTrace();
+			ret = false;
 		}
+		
+		return ret;
 	}
-
+	
+	/***
+	 * 
+	 * Méthode permettant de créer un répertoire dans le drive de l'utilisateur.
+	 * 
+	 * @param filename Nom du répertoire que l'on veut créer.
+	 * 
+	 * @return True si le fichier a été créé. Faux sinon.
+	 */
 	@Override
-	public void deleteFile(TreeNode fileNode) throws IOException {
+	public boolean createFolder(String dirName) {
 		
-		File file = new File(((FileInfos)fileNode.getData()).getPath());
+		File file = new File(dirName);	
+		boolean ret = false;
 		
-		if (file.isDirectory())
-			FileUtils.deleteDirectory(file);
-		else
-			file.delete();
+		ret = file.mkdir();	
 		
-		selectedNode.deleteFile(fileNode);
-	}
-
-	@Override
-	public void createFolder(String dirName) {
+		if (ret) {
+			currentNode = currentNode.appendChild(new FileInfos(dirName));
+		}
 		
-		File file = new File(dirName);				
-		file.mkdir();	
-
-		selectedNode.appendChild(new FileInfos(dirName));
-	}
-
-	@Override
-	public void setSelectedNode(FileNode selectedNode) {
-		this.selectedNode = selectedNode;		
+		return ret;
 	}
 
 	@Override
@@ -107,7 +155,7 @@ public class FileListerService implements IFileService, Serializable {
     		try {	        
 	    	
 	    		IOUtils.copy(input, output);	    		
-	    		selectedNode.appendChild(new FileInfos(destFilename));		
+	    		currentNode.appendChild(new FileInfos(destFilename));		
 	    		
     		} finally {
     			IOUtils.closeQuietly(input);

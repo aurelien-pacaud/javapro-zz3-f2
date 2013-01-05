@@ -14,7 +14,7 @@ public class BreadCrumbService {
 		MenuModel breadCrum = new DefaultMenuModel();
 		FileNode currentNode = selectedNode;
 		
-		while (currentNode != null) {
+		while (currentNode.getParent() != null) {
 			
 			MenuItem menuItem = new MenuItem();
 			
@@ -22,13 +22,13 @@ public class BreadCrumbService {
 			menuItem.addActionListener(driveManagedBean);
 			menuItem.getAttributes().put("node", currentNode);
 			menuItem.setAjax(true);
-			menuItem.setUpdate(":formTable, :formTree");
+			menuItem.setUpdate(":formTable :formTree :formBreadCrumb");
 			
 			breadCrum.getContents().add(0, menuItem);
-			
+
 			currentNode = (FileNode) currentNode.getParent();
 		}
-		
+				
 		return breadCrum;
 	}
 	

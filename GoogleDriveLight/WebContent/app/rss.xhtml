@@ -15,10 +15,9 @@
 	<h:body>				
 		<ui:composition template="/template/common.xhtml"> 
 			<ui:define name="title">Rss</ui:define>
-			<ui:define name="jsScript"><script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script></ui:define>
-    	
+			    	
     		<ui:define name="content">
-    			<p:feedReader value="http://rss.news.yahoo.com/rss/sports" var="feed">
+    			<p:feedReader value="http://rss.news.yahoo.com/rss/weather" var="feed">
 				    <h:outputText value="#{feed.title}" style="font-weight : bold"/>
 				    <br />
 				    <h:outputText value="#{feed.description.value}" escape="false"/>
