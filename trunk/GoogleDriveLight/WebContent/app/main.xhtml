@@ -14,151 +14,185 @@
 			<ui:define name="title">Google Drive Light</ui:define>
     		<ui:define name="content">
     		
-    			<h:form styleClass="search">  
-    				<h:graphicImage styleClass="logo" alt="logo" value="/resources/images/logo_128.png"/> 	    							
-    				<div id="searchInput">
-						<p:inputText id="searchid" value="#{driveManagedBean.pattern}" required="true"/>
-						<p:watermark for="searchid" value="#{msg['searchInput']}" />
+    			<!-- Barre de recherche du drive -->
+				<h:form styleClass="search">  
+					<h:graphicImage value="/resources/images/logo_128.png" styleClass="logo" alt="logo" /> 	    							
+					<div id="searchInput">
+						<p:inputText value="#{driveManagedBean.pattern}" id="searchid" size="35"/>
+						<p:watermark value="#{msg['searchInput']}" for="searchid" />
 						
-						<p:commandButton icon="ui-icon-search" value="#{msg['search']}" action="#{driveManagedBean.search}" 
-										 update=":formTable :formTree :formBreadCrumb :toolbar :formDetails" />	
+						<p:commandButton value="#{msg['search']}" 
+										 icon="ui-icon-search" 
+										 action="#{driveManagedBean.search}" 
+										 update=":formTable :formTree :formBreadCrumb :formToolbar :formDetails" />	
 					</div> 
 					<div class="clear" />
 				</h:form>    			
     			
-	    			<!-- Barre d'outils (haut) -->
-					<h:form id="toolbar">
-						<p:toolbar>
-							<p:toolbarGroup align="left">
-								<p:menuButton value="#{msg['create']}" disabled="#{driveManagedBean.pattern != null}">  		
-							    	<ui:insert name="header" >
-		  								<ui:include src="/template/drive/creationMenu.xhtml" />
-									</ui:insert>    
-								</p:menuButton>
-								<p:commandButton ajax="true" type="button" value="#{msg['import']}" 
-												 icon="ui-icon-document" onclick="dlgUpload.show()"
-												 disabled="#{driveManagedBean.pattern != null}"/>		
-												 					
-							</p:toolbarGroup>
-						</p:toolbar>
-					</h:form>
+				<!-- Barre d'outils contenant l'import, la création... -->
+				<h:form id="formToolbar">
+					<p:toolbar>
+						<p:toolbarGroup align="left">
+							<p:menuButton value="#{msg['create']}" disabled="#{driveManagedBean.pattern != null}">  		
+						    	<ui:insert name="header" >
+									<ui:include src="/template/drive/creationMenu.xhtml" />
+								</ui:insert>    
+							</p:menuButton>
+							<p:commandButton value="#{msg['import']}"
+											 ajax="true" 
+											 type="button"  
+											 icon="ui-icon-document" 
+											 onclick="dlgUpload.show()"
+											 disabled="#{driveManagedBean.pattern != null}" />		
+											 					
+						</p:toolbarGroup>
+					</p:toolbar>
+				</h:form>
 					
-					<!-- Les éléments suivants sont organisés selon un layout -->
-					<p:layout styleClass="driveContent">
-						<!-- Arbre des fichiers (gauche) -->
-						<p:layoutUnit position="west" size="330" header="#{msg['drive']}" styleClass="noBorder">
-						    <h:form id="formTree">
-						    
-						       <!-- Contextmenu de l'arbre du drive -->							    
-							    <p:contextMenu for="tree" nodeType="drive"> 
-									<p:submenu label="#{msg['create']}" icon="ui-icon-plus">
-										<ui:insert name="menu" >
-		  									<ui:include src="/template/drive/creationMenu.xhtml" />
-										</ui:insert>
-									</p:submenu> 
-							    </p:contextMenu> 
-						       
-								<p:contextMenu for="tree" nodeType="default"> 
-									<p:submenu label="#{msg['create']}" icon="ui-icon-plus">
-										<ui:insert name="menu" >
-		  									<ui:include src="/template/drive/creationMenu.xhtml" />
-										</ui:insert>
-									</p:submenu>
-							      	<p:menuitem id="deleteTree" value="#{msg['delete']}" update=":formTable :formTree :formBreadCrumb" 
-							      				icon="ui-icon-trash" action="#{driveManagedBean.deleteDirectory}"/>  
-							    </p:contextMenu> 
-						    	
-							   <p:tree value="#{driveManagedBean.model}" var="node" dynamic="true" cache="true" 
-							           id="tree" 
-							           selection="#{driveManagedBean.selectedNode}"  			 
-				                  	   selectionMode="single"
-				                  	   styleClass="noBorder">
-				                  	   
-				                   <p:ajax event="select" listener="#{driveManagedBean.onNodeSelect}" update=":formTable :formBreadCrumb :toolbar :formDetails" />	   
-							       
-						           <p:treeNode rendered="#{node.directory}" type="default" styleClass="#{!node.directory ? 'noDisplayTreeNode' : ''}">
-						             <h:graphicImage alt="folder" value="/resources/images/folder.png" /> <h:outputText value=" #{node}" />
-						       	   </p:treeNode>
-						       	   
-						       	   <p:treeNode rendered="#{node.directory}" type="drive" styleClass="#{!node.directory ? 'noDisplayTreeNode' : ''}">
-						             <h:graphicImage alt="folder" value="/resources/images/folder.png" /> <h:outputText value=" #{node}" />
-						       	   </p:treeNode>
+				<!-- Les éléments suivants sont organisés selon un layout -->
+				<p:layout styleClass="driveContent">
 				
-							   </p:tree>		
-							</h:form>				
-					    </p:layoutUnit>					    
-					    
-					    <!-- Détails d'un répertoire (centre) -->
-						<p:layoutUnit position="center" styleClass="noBorder" size="100">
-							
-							<h:form id="formBreadCrumb">
-								<p:breadCrumb styleClass="toolbar" model="#{driveManagedBean.breadCrumb}" />
-						    	<div class="space" />
-							</h:form>
-							
-						    <h:form id="formTable">
-						    
-						    	<!-- Contextmenu de la table -->
-								<p:contextMenu for="table"> 
-							      <p:menuitem value="#{msg['delete']}" update=":formTable :formTree" icon="ui-icon-trash" action="#{driveManagedBean.deleteFile}"/>  
-							    </p:contextMenu> 
-							    			    							    		    
-						    	<!-- Définition de la table -->			  
-							    <p:dataTable id="table" var="file" value="#{driveManagedBean.dirContent}" 
-							    			 selection="#{driveManagedBean.selectedFile}"
-							                 selectionMode="single" rowKey="#{file.data.path}"
-							                 styleClass="noBorder"
-							                 emptyMessage="#{msg['emptyDirectory']}">		        
-							       			       	
-							        <p:ajax event="rowSelect" listener="#{driveManagedBean.onRowSelect}" update=":formTable :formTree :formBreadCrumb :toolbar :formDetails"/>
-							        			     
-							        <p:ajax event="sort" update=":formTree"/>
-							        			        
-							        <p:column sortBy="#{file.data.name}" style="width:150px !important;">
-							            <f:facet name="header">
-							            	Name
-							            </f:facet>
-							            <h:graphicImage value="/resources/images/#{file.data.type.toString().toLowerCase()}.png"/> <h:outputText value=" #{file.data.name}"/>
-							        </p:column>
-							
-							        <p:column sortBy="#{file.data.type}" style="width:150px !important;">
-							            <f:facet name="header">
-							                    Type
-							            </f:facet>
-							            <h:outputText value="#{file.data.type}" />
-							        </p:column>
-							
-							        <p:column sortBy="#{file.data.size}" style="width:150px !important;">
-							            <f:facet name="header">
-							                    Size
-							            </f:facet>
-							            <h:outputText value="#{file.data.size}"> <f:convertNumber pattern="#.## Ko" /> </h:outputText>
-							        </p:column>
-							
-							        <p:column style="width:150px !important;">
-							            <f:facet name="header">
-							                    Last Updated
-							            </f:facet>
-							            <h:outputText value="#{file.data.lastModified}"><f:convertDateTime dateStyle="short" type="both" /> </h:outputText>
-							        </p:column>			        
-							    </p:dataTable>
-							</h:form>  
-									
-					    </p:layoutUnit>
-					    
-					    <p:layoutUnit position="east" styleClass="noBorder" size="330" header="#{msg['details']}">
-					    	<h:form id="formDetails">
-					    		<h:panelGrid columns="2">
-					    			<h:outputText value="#{msg['fileDetails']}" rendered="#{driveManagedBean.selectedFile == null}"/>
-					            	<h:outputText value="#{driveManagedBean.selectedFile.data.name}" /> <br />
-					            	<h:outputText value="#{driveManagedBean.selectedFile.data.size}" /> <br />	
-					            	<h:outputText value="#{driveManagedBean.selectedFile.data.type}" /> <br />						         
-		  						</h:panelGrid>
-		  					</h:form>
-					    </p:layoutUnit>
-					    
-					</p:layout>
-
+					<!-- Arbre du drive (gauche) -->
+					<p:layoutUnit header="#{msg['drive']}" position="west" size="330" styleClass="noBorder">
+				    	<h:form id="formTree">
+				    
+							<!-- Contextmenu de l'arbre pour le noeud root -->							    
+							<p:contextMenu for="tree" nodeType="drive"> 
+								<p:submenu label="#{msg['create']}" icon="ui-icon-plus">
+									<ui:insert name="menu" >
+										<ui:include src="/template/drive/creationMenu.xhtml" />
+									</ui:insert>
+								</p:submenu> 
+							</p:contextMenu> 
+				      
+				      		<!-- Contextmenu de l'arbre pour les noeuds standards -->
+							<p:contextMenu for="tree" nodeType="default"> 
+								<p:submenu label="#{msg['create']}" icon="ui-icon-plus">
+									<ui:insert name="menu" >
+										<ui:include src="/template/drive/creationMenu.xhtml" />
+									</ui:insert>
+								</p:submenu>
+						      	<p:menuitem value="#{msg['delete']}" 
+						      			    update=":formTable :formTree :formBreadCrumb" 
+						      				icon="ui-icon-trash" action="#{driveManagedBean.deleteDirectory}" />  
+						    </p:contextMenu> 
+				   	
+				   			<!-- Tree représentant l'arbre. -->
+							<p:tree value="#{driveManagedBean.model}" 
+									var="node" 
+									dynamic="true" 
+									cache="true" 
+									id="tree" 
+									selection="#{driveManagedBean.selectedNode}"                          
+									selectionMode="single"
+									styleClass="noBorder">
+                                              
+								<p:ajax event="select" 
+										listener="#{driveManagedBean.onNodeSelect}" 
+										update=":formTable :formBreadCrumb :formToolbar :formDetails" />         
+								           
+								<p:treeNode type="default" 
+											rendered="#{node.directory}" 
+											styleClass="#{!node.directory ? 'noDisplayTreeNode' : ''}">
+								  
+								  <h:graphicImage alt="folder" value="/resources/images/folder.png" /> 
+								  <h:outputText value=" #{node}" />
+								</p:treeNode>
+								
+								<p:treeNode type="drive" 
+											rendered="#{node.directory}" 
+											styleClass="#{!node.directory ? 'noDisplayTreeNode' : ''}">
+								  
+								  <h:graphicImage alt="folder" value="/resources/images/folder.png" /> 
+								  <h:outputText value=" #{node}" />
+								</p:treeNode>								
+							</p:tree>           
+						</h:form>				
+					</p:layoutUnit>					    
+				  
+					<!-- Détails d'un répertoire (centre) -->
+					<p:layoutUnit position="center" styleClass="noBorder" size="100">
+						
+						<h:form id="formBreadCrumb">
+							<p:breadCrumb styleClass="toolbar" model="#{driveManagedBean.breadCrumb}" />
+					    	<div class="space" />
+						</h:form>
+						
+					    <h:form id="formTable">
+				    
+					    	<!-- Contextmenu de la table -->
+							<p:contextMenu for="table"> 
+					     		<p:menuitem value="#{msg['delete']}" 				     		 
+					     					action="#{driveManagedBean.deleteFile}"
+					     					update=":formTable :formTree :formBreadCrumb :formToolbar" 
+					     					icon="ui-icon-trash" />  
+					   		</p:contextMenu> 
+					   			    							    		    
+							<!-- Définition de la table -->			  
+							<p:dataTable id="table" var="file" value="#{driveManagedBean.dirContent}" 
+										 selection="#{driveManagedBean.selectedFile}"
+							             selectionMode="single" rowKey="#{file.data.path}"
+							             styleClass="noBorder"
+							             emptyMessage="#{msg['emptyDirectory']}">		        
+					     			       	
+					      		<p:ajax event="rowSelect" 
+					      				listener="#{driveManagedBean.onRowSelect}" 
+					      				update=":formTable :formTree :formBreadCrumb :formToolbar :formDetails"/>
+					      			     
+					      		<p:ajax event="sort" update=":formTree"/>
+					      			        
+					      		<p:column sortBy="#{file.data.name}">
+					          		<f:facet name="header">
+					          			#{msg['name']}
+					          		</f:facet>
+					          		<h:graphicImage value="/resources/images/#{file.data.type.toString().toLowerCase()}.png"/> 
+					          		<h:outputText value=" #{file.data.name}"/>
+					      		</p:column>
+					
+					      		<p:column sortBy="#{file.data.type}">
+					          		<f:facet name="header">
+										#{msg['type']}
+					          		</f:facet>
+					          		<h:outputText value="#{file.data.type}" />
+					      		</p:column>
+					
+								<p:column sortBy="#{file.data.size}">
+								    <f:facet name="header">
+										#{msg['size']}
+								    </f:facet>
+								    <h:outputText value="#{file.data.size}"> 
+								    	<f:convertNumber pattern="#.## Ko" /> 
+								    </h:outputText>
+								</p:column>
+					
+								<p:column>
+								    <f:facet name="header">
+										#{msg['lastModif']}
+								    </f:facet>
+								    <h:outputText value="#{file.data.lastModified}">
+								    	<f:convertDateTime dateStyle="short" type="both" /> 
+								    </h:outputText>
+								</p:column>	
+										        
+					    	</p:dataTable>
+						</h:form>						
+					</p:layoutUnit>
+					
+					<!-- Affichage du détail sur le fichier sélectionné. -->    
+					<p:layoutUnit header="#{msg['details']}" position="east" styleClass="noBorder" size="330">
+						<h:form id="formDetails">
+							<h:panelGrid columns="2">
+								<h:outputText value="#{msg['fileDetails']}" rendered="#{driveManagedBean.selectedFile == null}"/>
+								<h:outputText value="#{driveManagedBean.selectedFile.data.name}" /> <br />
+								<h:outputText value="#{driveManagedBean.selectedFile.data.size}">
+									<f:convertNumber pattern="#.## Ko" />
+								</h:outputText><br />	
+								<h:outputText value="#{driveManagedBean.selectedFile.data.type}" /> <br />	
+								<h:outputText value="#{driveManagedBean.selectedFile.data.owner}" /> <br />				         
+							</h:panelGrid>
+						</h:form>
+    				</p:layoutUnit>    
+				</p:layout>
 			    
 			    <!-- Dialog permettant l'upload d'un fichier -->
 			     <p:dialog header="#{msg['uploadFileDialogTitle']}" widgetVar="dlgUpload" draggable="false" resizable="false" modal="true">

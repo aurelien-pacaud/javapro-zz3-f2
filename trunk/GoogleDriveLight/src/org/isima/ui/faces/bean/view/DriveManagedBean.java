@@ -54,9 +54,7 @@ public class DriveManagedBean implements Serializable, ActionListener {
 	@FileLister
 	@Singleton
 	private IFileService fileService;
-	
-	private String currentDirectory;
-	
+		
 	private TreeNode selectedFile;	
 	
 	private String filename;
@@ -77,8 +75,6 @@ public class DriveManagedBean implements Serializable, ActionListener {
 		} catch (MultipleBindException e) {
 			e.printStackTrace();
 		}		
-		
-		currentDirectory = userHome;
 		
 		model = new FileNode(new FileInfos(""), null);
 		fileService.getTree(userHome).setParent(model);	
@@ -104,8 +100,6 @@ public class DriveManagedBean implements Serializable, ActionListener {
 	public void search() {
 		
 		dirContent = model.search(new WildcardFileFilter(pattern)); 
-		
-		currentDirectory = pattern;
 	}
 
 	public void setSelectedNode(TreeNode selectedNode) {
@@ -116,9 +110,6 @@ public class DriveManagedBean implements Serializable, ActionListener {
 		this.selectedNode = selectedNode;
 		
 		dirContent = selectedNode.getChildren();
-		
-		FileInfos file = (FileInfos)(selectedNode.getData());	
-		currentDirectory = file.getPath();
 		
 		if (!selectedNode.isLeaf())
 			selectedNode.setExpanded(true);
@@ -157,10 +148,6 @@ public class DriveManagedBean implements Serializable, ActionListener {
 	
 	public TreeNode getSelectedFile() {
 		return selectedFile;
-	}
-	
-	public String getCurrentDirectory() {
-		return currentDirectory;
 	}
 	
 	public String getFilename() {
@@ -224,6 +211,7 @@ public class DriveManagedBean implements Serializable, ActionListener {
 	 */
 	public void createFile() {
 		
+		String currentDirectory = ((FileInfos) selectedNode.getData()).getPath();
 		String path = String.format("%s/%s", currentDirectory, filename);		
 		
 		if (fileService.createNewFile(path))			
@@ -237,6 +225,7 @@ public class DriveManagedBean implements Serializable, ActionListener {
 	 */
 	public void createDirectory() {
 		
+		String currentDirectory = ((FileInfos) selectedNode.getData()).getPath();
 		String path = String.format("%s/%s", currentDirectory, dirname);			
 		
 		if (fileService.createFolder(path)) {
@@ -273,8 +262,8 @@ public class DriveManagedBean implements Serializable, ActionListener {
 	public void handleFileUpload(FileUploadEvent event) {
 		
 		try {
-			
-			fileService.copyFile(event.getFile(), currentDirectory + "/" + event.getFile().getFileName());			
+			String currentDirectory = ((FileInfos) selectedNode.getData()).getPath();
+			fileService.copyFile(event.getFile(), String.format("%s/%s", currentDirectory, event.getFile().getFileName()));			
 		} catch (IOException e) {
 			
 			e.printStackTrace();
