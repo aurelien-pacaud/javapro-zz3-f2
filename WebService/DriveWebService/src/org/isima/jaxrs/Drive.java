@@ -12,26 +12,10 @@ import org.primefaces.model.TreeNode;
 @Path("/drive")
 public class Drive {
 	
-	// This method is called if TEXT_PLAIN is request
-	  @GET
-	  @Produces(MediaType.TEXT_PLAIN)
-	  public String sayPlainTextHello() {
-		  
-		  
-		  return "Hello Jersey\n";
-	  }
-
-	  // This method is called if XML is request
-	  @GET
-	  @Produces(MediaType.TEXT_XML)
-	  public String sayXMLHello() {
-	    return "<?xml version=\"1.0\"?>" + "<hello> Hello Jersey" + "</hello>\n";
-	  }
-
 	  // This method is called if HTML is request
 	  @GET
 	  @Produces(MediaType.TEXT_HTML)
-	  public String sayHtmlHello() {
+	  public String getDriveContent() {
 		 
 		  FileListerService f = new FileListerService();
 		  StringBuilder str = new StringBuilder();
@@ -42,24 +26,31 @@ public class Drive {
 	    return str.toString();
 	  }
 	  
+	  /***
+	   * 
+	   * Fonction récursive permettant d'afficher l'arborescence du drive.
+	   * 
+	   * @param node Noeud courant dont on va traiter les fils.
+	   * @param level Niveau du noeud afin de savoir comment l'afficher.
+	   * @param str String contenant l'arborescence en cours de construction.
+	   * @return L'arborescence du drive.
+	   */
 	  private StringBuilder buildTree(TreeNode node, int level, StringBuilder str) {
 		  
 		  for (TreeNode childNode : node.getChildren()) {
 
-			  str.append("|");
 			  if (level > 1) {
 				  
-				  for (int i = 0; i < (level - 1) * 3 + 3; ++i) {
+				  for (int j = 0; j < (level - 1) * 4; ++j) {
+					  
+					  if (j % 4 == 0)
+						  str.append("&#9474;");
+					  
 					  str.append("&nbsp;");
-				  }
-				  str.append("|");
+				  } 
 			  }
-			  
-			  for (int i = 0; i < 3; ++i) {
-				  str.append("-");
-			  }
-			  
-			  str.append(String.format(" %s <br />", ((FileInfos)childNode.getData()).getName()));	
+			  			  
+			  str.append(String.format("&#9492;&#9472;&#9472; %s <br />", ((FileInfos)childNode.getData()).getName()));	
 			  buildTree(childNode, level + 1, str);
 		  }
 		  
