@@ -10,40 +10,20 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 
-import org.isima.model.FileInfos;
 import org.isima.model.FileNode;
 import org.isima.ui.utils.FileLister;
-import org.isima.ui.utils.FilePathFilter;
-import org.primefaces.model.TreeNode;
 import org.primefaces.model.UploadedFile;
 
 public class FileListerService implements IFileService, Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	private FileNode model;
-	private FileNode currentNode;
-	
 	@Override
 	public FileNode getTree(final String path) {
-
-		model = (FileNode) FileLister.getTree(path);
 		
-		currentNode = model;
+		return (FileNode) FileLister.getTree(path);
+	}
 		
-		return model;
-	}
-	
-	@Override
-	public void setCurrentNode(FileNode node) {
-		this.currentNode = node;		
-	}
-	
-	@Override
-	public FileNode getCurrentNode() {
-		return currentNode;
-	}
-	
 	/***
 	 * 
 	 * Méthode permettant de supprimer un dossier dans le drive de l'utilisateur.
@@ -55,9 +35,7 @@ public class FileListerService implements IFileService, Serializable {
 	@Override
 	public boolean deleteFolder(String path) throws IOException {
 		
-		FileUtils.deleteDirectory(new File(path));					
-
-		((FileNode) currentNode.getParent()).deleteChildNode(currentNode);
+		FileUtils.deleteDirectory(new File(path));	
 		
 		return true;
 	}
@@ -74,19 +52,8 @@ public class FileListerService implements IFileService, Serializable {
 	public boolean deleteFile(String path) throws IOException {
 		
 		File file = new File(path);
-		boolean ret = false;
 		
-		ret = file.delete();
-		
-		/* Si la suppression du fichier est faite. */
-		if (ret) {
-			
-			/* On recherche le noeud associé dans le model. */
-			TreeNode node = currentNode.searchFile(new FilePathFilter(path));			
-			currentNode.deleteChildNode(node);
-		}
-		
-		return ret;
+		return file.delete();
 	}
 
 	/***
@@ -96,26 +63,14 @@ public class FileListerService implements IFileService, Serializable {
 	 * @param filename Nom du fichier que l'on veut créer.
 	 * 
 	 * @return True si le fichier a été créé. Faux sinon.
+	 * @throws IOException 
 	 */
 	@Override
-	public boolean createNewFile(String filename) {
+	public boolean createNewFile(String filename) throws IOException {
 		
 		File file = new File(filename);
-		boolean ret = false;
-		
-		try {
-			
-			ret = file.createNewFile();
-			
-			if (ret)
-				currentNode.appendChild(new FileInfos(filename));
-		} 
-		catch (IOException e) {
-			
-			ret = false;
-		}
-		
-		return ret;
+
+		return file.createNewFile();
 	}
 	
 	/***
@@ -130,21 +85,15 @@ public class FileListerService implements IFileService, Serializable {
 	public boolean createFolder(String dirName) {
 		
 		File file = new File(dirName);	
-		boolean ret = false;
 		
-		ret = file.mkdir();	
-		
-		if (ret) {
-			currentNode = currentNode.appendChild(new FileInfos(dirName));
-		}
-		
-		return ret;
+		return file.mkdir();
 	}
 
 	@Override
-	public void copyFile(UploadedFile file, String destFilename) throws IOException {
+	public boolean copyFile(UploadedFile file, String destFilename) throws IOException {
 
-	    InputStream input = file.getInputstream();	    
+	    InputStream input = file.getInputstream();	  
+	    boolean ret = false;
 
     	File f = new File(destFilename);
     	
@@ -154,13 +103,15 @@ public class FileListerService implements IFileService, Serializable {
 
     		try {	        
 	    	
-	    		IOUtils.copy(input, output);	    		
-	    		currentNode.appendChild(new FileInfos(destFilename));		
+	    		IOUtils.copy(input, output);
+	    		ret = true;
 	    		
     		} finally {
     			IOUtils.closeQuietly(input);
     			IOUtils.closeQuietly(output);
     		}
     	}
+    	
+    	return ret;
 	}
 }
