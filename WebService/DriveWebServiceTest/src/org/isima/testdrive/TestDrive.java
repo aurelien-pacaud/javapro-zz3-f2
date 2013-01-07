@@ -10,6 +10,7 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
+import com.sun.jersey.api.representation.Form;
 
 public class TestDrive {
 	
@@ -19,8 +20,16 @@ public class TestDrive {
 	    Client client = Client.create(config);
 	    WebResource service = client.resource(getBaseURI());
 	   
-	    System.out.println(service.path("rest").path("drive").accept(MediaType.TEXT_HTML).get(ClientResponse.class).toString());
-	    System.out.println(service.path("rest").path("drive").accept(MediaType.TEXT_HTML).get(String.class));
+	    /* Test methode GET pour le listing d'un repertoire */
+	    System.out.println(service.path("drive").path("list").accept(MediaType.TEXT_HTML).get(ClientResponse.class).toString());
+	    System.out.println(service.path("drive").path("list").accept(MediaType.TEXT_HTML).get(String.class) + "\n");
+	   
+	    /* Test methode POST pour la creation d'un fichier */
+	    Form form = new Form();
+	    form.add("path", "/tmp/testAddFile.txt");
+	    ClientResponse response = service.path("drive").path("add").type(MediaType.APPLICATION_FORM_URLENCODED).post(ClientResponse.class, form);
+	    System.out.println(response);
+	    System.out.println(response.getEntity(String.class));
 	}
 	
 	private static URI getBaseURI() {
