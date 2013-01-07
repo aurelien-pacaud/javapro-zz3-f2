@@ -5,8 +5,6 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ActionListener;
@@ -116,7 +114,6 @@ public class DriveManagedBean implements Serializable, ActionListener {
 		
 		selectedNode.setSelected(true);
 		
-		fileService.setCurrentNode((FileNode)selectedNode);
 		pattern = null;
 		selectedFile = null;
 	}
@@ -175,9 +172,21 @@ public class DriveManagedBean implements Serializable, ActionListener {
 		
 		FileInfos fileInfos = (FileInfos) selectedFile.getData();
 		
-		try {			
-			if (fileInfos.isFile())
-				fileService.deleteFile(fileInfos.getPath());
+		try {	
+			
+			if (fileInfos.isFile()) {
+				if (fileService.deleteFile(fileInfos.getPath())) {
+					
+					/* On recherche le noeud associé dans le model. */		
+					((FileNode) selectedNode).deleteChildNode(selectedFile);
+					MessageBundle.displayInformationMsg(MessageBundle.getMessage("fileDeleted"));
+				}
+				else {
+
+					MessageBundle.displayErrorMsg(MessageBundle.getMessage("fileNotDeleted"));
+				}				
+			}
+				
 			else {
 				
 				setSelectedNode(selectedFile);
@@ -186,7 +195,7 @@ public class DriveManagedBean implements Serializable, ActionListener {
 				
 			
 		} catch (IOException e) {
-			e.printStackTrace();
+			MessageBundle.displayErrorMsg(MessageBundle.getMessage("fileNotDeleted"));
 		}
 	}
 	
@@ -198,11 +207,21 @@ public class DriveManagedBean implements Serializable, ActionListener {
 		try {
 			
 			FileNode parent = (FileNode) selectedNode.getParent();
-			fileService.deleteFolder(((FileInfos)selectedNode.getData()).getPath());		
-			setSelectedNode(parent);
+			
+			if (fileService.deleteFolder(((FileInfos)selectedNode.getData()).getPath())) {
+				
+				((FileNode) selectedNode.getParent()).deleteChildNode(selectedNode);
+				setSelectedNode(parent);
+				
+				MessageBundle.displayInformationMsg(MessageBundle.getMessage("folderDeleted"));
+			}
+			else {
+
+				MessageBundle.displayErrorMsg(MessageBundle.getMessage("folderNotDeleted"));
+			}
 			
 		} catch (IOException e) {
-			e.printStackTrace();
+			MessageBundle.displayErrorMsg(MessageBundle.getMessage("folderNotDeleted"));
 		}
 	}
 	
@@ -214,10 +233,19 @@ public class DriveManagedBean implements Serializable, ActionListener {
 		String currentDirectory = ((FileInfos) selectedNode.getData()).getPath();
 		String path = String.format("%s/%s", currentDirectory, filename);		
 		
-		if (fileService.createNewFile(path))			
-			MessageBundle.displayInformationMsg(MessageBundle.getMessage("fileCreated"));
-		else
-			MessageBundle.displayInformationMsg(MessageBundle.getMessage("fileNotCreated"));
+		try {
+			
+			if (fileService.createNewFile(path)) {
+				
+				((FileNode) selectedNode).appendChild(new FileInfos(path));
+				MessageBundle.displayInformationMsg(MessageBundle.getMessage("fileCreated"));
+			}
+			else
+				MessageBundle.displayErrorMsg(MessageBundle.getMessage("fileNotCreated"));
+			
+		} catch (IOException e) {
+			MessageBundle.displayErrorMsg(MessageBundle.getMessage("fileNotCreated"));
+		}
 	}
 	
 	/**
@@ -230,7 +258,7 @@ public class DriveManagedBean implements Serializable, ActionListener {
 		
 		if (fileService.createFolder(path)) {
 			
-			setSelectedNode(fileService.getCurrentNode());
+			setSelectedNode(((FileNode) selectedNode).appendChild(new FileInfos(path)));
 			selectedNode.getParent().setExpanded(true);			
 
 			MessageBundle.displayInformationMsg(MessageBundle.getMessage("folderCreated"));			
@@ -263,14 +291,21 @@ public class DriveManagedBean implements Serializable, ActionListener {
 		
 		try {
 			String currentDirectory = ((FileInfos) selectedNode.getData()).getPath();
-			fileService.copyFile(event.getFile(), String.format("%s/%s", currentDirectory, event.getFile().getFileName()));			
+			String path = String.format("%s/%s", currentDirectory, event.getFile().getFileName());
+						
+			if (fileService.copyFile(event.getFile(), path)) {
+
+	    		((FileNode) selectedNode).appendChild(new FileInfos(path));
+	    		
+	    		MessageBundle.displayInformationMsg(String.format(MessageBundle.getMessage("uploadSuccesful"), event.getFile().getFileName()));		
+			}
+			else {
+				MessageBundle.displayErrorMsg(MessageBundle.getMessage("uploadNotSuccesful"));	
+			}
 		} catch (IOException e) {
 			
-			e.printStackTrace();
+			MessageBundle.displayErrorMsg(MessageBundle.getMessage("uploadNotSuccesful"));	
 		}		
-		
-		FacesMessage msg = new FacesMessage(MessageBundle.getMessage("successful"), String.format(MessageBundle.getMessage("uploadSuccesful"), event.getFile().getFileName()));
-		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
 	@Override
