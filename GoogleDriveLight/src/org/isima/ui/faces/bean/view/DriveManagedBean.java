@@ -10,7 +10,6 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ActionListener;
 
 import org.apache.commons.io.filefilter.WildcardFileFilter;
-import org.isima.annotation.FileLister;
 import org.isima.model.FileInfos;
 import org.isima.model.FileNode;
 import org.isima.services.BreadCrumbService;
@@ -26,7 +25,6 @@ import org.primefaces.model.TreeNode;
 
 import fr.isima.annotation.Inject;
 import fr.isima.annotation.InjectedValue;
-import fr.isima.annotation.Singleton;
 import fr.isima.exception.MultipleBindException;
 import fr.isima.exception.NotNullBindingException;
 import fr.isima.injector.Injector;
@@ -49,8 +47,6 @@ public class DriveManagedBean implements Serializable, ActionListener {
 	private String userHome;
 	
 	@Inject
-	@FileLister
-	@Singleton
 	private IFileService fileService;
 		
 	private TreeNode selectedFile;	
