@@ -80,7 +80,13 @@ public class FileListerService implements IFileService, Serializable {
 		boolean ret = false;
 		
 		try {
-			file.createNewFile();
+			
+			if (!file.exists()) {
+				
+				file.createNewFile();
+				ret = true;
+			}
+			
 		} catch (IOException e) {
 			ret = false;
 		}
@@ -100,8 +106,15 @@ public class FileListerService implements IFileService, Serializable {
 	public boolean createFolder(String dirName) {
 		
 		File file = new File(dirName);	
+		boolean ret = false;
 		
-		return file.mkdir();
+		if (!file.exists()) {
+			
+			file.mkdir();
+			ret = true;
+		}
+				
+		return ret;
 	}
 
 	@Override
