@@ -17,7 +17,7 @@ public class TestDrive {
 	
 	public static void main(String[] args) {
 	
-	    ClientConfig config = new DefaultClientConfig();
+		ClientConfig config = new DefaultClientConfig();
 	    Client client = Client.create(config);
 	    WebResource service = client.resource(getBaseURI());
 	   

@@ -42,7 +42,7 @@ public class Drive {
 	  @POST
 	  @Path("add/{filepath}")
 	  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	  @Produces(MediaType.TEXT_HTML)
+	  @Produces(MediaType.TEXT_PLAIN)
 	  public String createNewFile (@PathParam("filepath") String filepath) {
 		  
 		  String strResponse;
@@ -73,7 +73,7 @@ public class Drive {
 	  @DELETE
 	  @Path("delete/{filepath}")
 	  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	  @Produces(MediaType.TEXT_HTML)
+	  @Produces(MediaType.TEXT_PLAIN)
 	  public String deleteFile (@PathParam("filepath") String filepath) {
 		  
 		  String strResponse = filepath;
