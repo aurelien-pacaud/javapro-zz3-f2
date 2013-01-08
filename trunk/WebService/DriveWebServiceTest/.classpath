@@ -14,5 +14,8 @@
 	<classpathentry kind="lib" path="lib/jersey-servlet-1.16.jar"/>
 	<classpathentry kind="lib" path="lib/jettison-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/jsr311-api-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/jersey-test-framework-1.1.4.1.jar"/>
+	<classpathentry kind="lib" path="lib/junit-4.10.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/DriveWebService"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
