@@ -1,16 +1,18 @@
 package org.isima.jaxrs;
 
-import javax.ws.rs.FormParam;
+import java.io.IOException;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.PathParam;
 
 import org.isima.model.FileInfos;
-import org.isima.model.FileNode;
 import org.isima.services.FileListerService;
-import org.isima.ui.utils.FilePathFilter;
 import org.primefaces.model.TreeNode;
 
 @Path("/drive")
@@ -38,31 +40,62 @@ public class Drive {
 	   * @return un message indiquant le succes ou l'echec de l'operation
 	   */
 	  @POST
-	  @Path("add")
+	  @Path("add/{filepath}")
+	  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	  @Produces(MediaType.TEXT_HTML)
-	  public String createNewFile (@FormParam("path") String path) {
+	  public String createNewFile (@PathParam("filepath") String filepath) {
 		  
+		  String strResponse;
 		  FileListerService f = new FileListerService();
 		  boolean response = false;
 		  
 		  try 
 		  {  
-			  response = f.createNewFile(path);
+			  response = f.createNewFile(filepath);
 		  } 
 		  catch (Exception e) 
 		  {
 				e.printStackTrace();
 		  }
 		  
-		  String strResponse;
-		  
 		  if (response)
 		  {
-			  strResponse = "Create new file " + path + " : OK !";
+			  strResponse = "Create new file " + filepath + " : OK !";
 		  }
 		  else
 		  {
-			  strResponse = "Create new file " + path + " : ERROR !";
+			  strResponse = "Create new file " + filepath + " : ERROR !";
+		  }
+		  
+		  return strResponse;
+	  }
+	  
+	  @DELETE
+	  @Path("delete/{filepath}")
+	  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	  @Produces(MediaType.TEXT_HTML)
+	  public String deleteFile (@PathParam("filepath") String filepath) {
+		  
+		  String strResponse = filepath;
+		  
+		  FileListerService f = new FileListerService();
+		  boolean response = false;
+		  try 
+		  {
+			response = f.deleteFile(filepath);
+		  } 
+		  catch (IOException e) 
+		  {
+			e.printStackTrace();
+		  }
+		  
+		  if (response)
+		  {
+			  strResponse = "Delete file " + filepath + " : OK !";
+		  }
+		  else
+		  {
+			  strResponse = "Delete file " + filepath + " : ERROR !";
 		  }
 		  
 		  return strResponse;
