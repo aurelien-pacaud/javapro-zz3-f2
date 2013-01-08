@@ -4,6 +4,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,11 +34,18 @@ public class FileListerService implements IFileService, Serializable {
 	 * @return True si le dossier a été supprimé. Faux sinon.
 	 */
 	@Override
-	public boolean deleteFolder(String path) throws IOException {
+	public boolean deleteFolder(String path) {
 		
-		FileUtils.deleteDirectory(new File(path));	
+		boolean ret = false;
 		
-		return true;
+		try {
+			FileUtils.deleteDirectory(new File(path));
+			ret = true;
+		} catch (IOException e) {
+			ret = false;
+		}	
+		
+		return ret;
 	}
 	
 	/***
@@ -49,7 +57,7 @@ public class FileListerService implements IFileService, Serializable {
 	 * @return True si le fichier a été supprimé. Faux sinon.
 	 */
 	@Override
-	public boolean deleteFile(String path) throws IOException {
+	public boolean deleteFile(String path) {
 		
 		File file = new File(path);
 		
@@ -66,11 +74,18 @@ public class FileListerService implements IFileService, Serializable {
 	 * @throws IOException 
 	 */
 	@Override
-	public boolean createNewFile(String filename) throws IOException {
+	public boolean createNewFile(String filename) {
 		
 		File file = new File(filename);
+		boolean ret = false;
+		
+		try {
+			file.createNewFile();
+		} catch (IOException e) {
+			ret = false;
+		}
 
-		return file.createNewFile();
+		return ret;
 	}
 	
 	/***
@@ -90,23 +105,38 @@ public class FileListerService implements IFileService, Serializable {
 	}
 
 	@Override
-	public boolean copyFile(UploadedFile file, String destFilename) throws IOException {
+	public boolean copyFile(UploadedFile file, String destFilename) {
 
-	    InputStream input = file.getInputstream();	  
+	    InputStream input = null;
 	    boolean ret = false;
+	    
+		try {
+			input = file.getInputstream();
+		} catch (IOException e1) {
+			ret = false;
+		}	  
+	    
 
     	File f = new File(destFilename);
     	
     	if (!f.exists()) {
     		
-    		OutputStream output = new FileOutputStream(f);
+    		OutputStream output = null;
+    		
+			try {
+				output = new FileOutputStream(f);
+			} catch (FileNotFoundException e) {
+				ret = false;
+			}
 
     		try {	        
 	    	
 	    		IOUtils.copy(input, output);
 	    		ret = true;
 	    		
-    		} finally {
+    		} catch (IOException e) {
+				ret = false;
+			} finally {
     			IOUtils.closeQuietly(input);
     			IOUtils.closeQuietly(output);
     		}
