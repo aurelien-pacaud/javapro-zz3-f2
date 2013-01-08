@@ -1,7 +1,5 @@
 package org.isima.jaxrs;
 
-import java.io.IOException;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -9,6 +7,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.PathParam;
 
 import org.isima.model.FileInfos;
@@ -21,14 +20,15 @@ public class Drive {
 	  // This method is called if HTML is request
 	  @GET
 	  @Produces(MediaType.TEXT_HTML)
-	  @Path("list")
-	  public String getDriveContent() {
+	  @Path("list/{drivepath}")
+	  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	  public String getDriveContent(@PathParam("drivepath") String drivepath) {
 		 
 		  FileListerService f = new FileListerService();
 		  StringBuilder str = new StringBuilder();
 		  		  
 		  str.append("Drive <br />");
-		  buildTree(f.getTree("/tmp/"), 1, str);
+		  buildTree(f.getTree(drivepath), 1, str);
 		  
 	    return str.toString();
 	  }
@@ -40,65 +40,27 @@ public class Drive {
 	   * @return un message indiquant le succes ou l'echec de l'operation
 	   */
 	  @POST
-	  @Path("add/{filepath}")
+	  @Path("add/file/{filepath}")
 	  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	  @Produces(MediaType.TEXT_PLAIN)
-	  public String createNewFile (@PathParam("filepath") String filepath) {
-		  
-		  String strResponse;
+	  public Response createNewFile (@PathParam("filepath") String filepath) {
+
 		  FileListerService f = new FileListerService();
-		  boolean response = false;
 		  
-		  try 
-		  {  
-			  response = f.createNewFile(filepath);
-		  } 
-		  catch (Exception e) 
-		  {
-				e.printStackTrace();
-		  }
+		  boolean ret = f.createNewFile(filepath);
 		  
-		  if (response)
-		  {
-			  strResponse = "Create new file " + filepath + " : OK !";
-		  }
-		  else
-		  {
-			  strResponse = "Create new file " + filepath + " : ERROR !";
-		  }
-		  
-		  return strResponse;
+		  return Response.status(ret ? Response.Status.OK : Response.Status.UNAUTHORIZED).build();
 	  }
 	  
 	  @DELETE
-	  @Path("delete/{filepath}")
+	  @Path("delete/file/{filepath}")
 	  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	  @Produces(MediaType.TEXT_PLAIN)
-	  public String deleteFile (@PathParam("filepath") String filepath) {
-		  
-		  String strResponse = filepath;
+	  public Response deleteFile (@PathParam("filepath") String filepath) {
 		  
 		  FileListerService f = new FileListerService();
-		  boolean response = false;
-		  try 
-		  {
-			response = f.deleteFile(filepath);
-		  } 
-		  catch (IOException e) 
-		  {
-			e.printStackTrace();
-		  }
 		  
-		  if (response)
-		  {
-			  strResponse = "Delete file " + filepath + " : OK !";
-		  }
-		  else
-		  {
-			  strResponse = "Delete file " + filepath + " : ERROR !";
-		  }
+		  boolean ret = f.deleteFile(filepath);
 		  
-		  return strResponse;
+		  return Response.status(ret ? Response.Status.OK : Response.Status.UNAUTHORIZED).build();
 	  }
 	  
 	  /***
