@@ -6,6 +6,8 @@ import java.net.URLEncoder;
 
 import javax.ws.rs.core.MediaType;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.sun.jersey.api.client.ClientResponse;
@@ -34,6 +36,11 @@ public class TestDriveWithJerseyTestFramework extends JerseyTest {
 		return new HTTPContainerFactory();
 	}
 	
+	/**
+	 * Permet d'initialiser l'environement avant les tests, afin
+	 * d'avoir un repertoire dedie dans tmp.
+	 */
+	@Before
 	@Override
 	public void setUp() throws Exception {
 		
@@ -100,5 +107,64 @@ public class TestDriveWithJerseyTestFramework extends JerseyTest {
 	    										  .delete(ClientResponse.class);
 	    
 	    assertEquals(401, responseDelete.getStatus());
+	}
+	
+	@Test
+	public void testCreateFolderPass() throws UnsupportedEncodingException {
+		
+		String urlEncoded = URLEncoder.encode(String.format("%s/%s", driveFolder, "totoFolder"), "UTF-8");
+		
+	    ClientResponse responseAdd = resource().path("drive").path("add").path("folder").path(urlEncoded)
+	    										  .post(ClientResponse.class);
+	    
+	    assertEquals(200, responseAdd.getStatus());
+	}
+	
+	@Test
+	public void testCreateFolderFail () throws UnsupportedEncodingException {
+		
+		String urlEncoded = URLEncoder.encode(String.format("%s/%s", driveFolder, "totoFolder"), "UTF-8");
+		
+	    ClientResponse responseAdd = resource().path("drive").path("add").path("folder").path(urlEncoded)
+	    										  .post(ClientResponse.class);
+	    
+	    assertEquals(401, responseAdd.getStatus());
+	}
+	
+	@Test
+	public void testDeleteFolderPass () throws UnsupportedEncodingException {
+		
+		String urlEncoded = URLEncoder.encode(String.format("%s/%s", driveFolder, "totoFolder"), "UTF-8");
+		
+	    ClientResponse responseDelete = resource().path("drive").path("delete").path("folder").path(urlEncoded)
+	    										  .delete(ClientResponse.class);
+	    
+	    assertEquals(200, responseDelete.getStatus());
+	}
+	
+	@Test
+	public void testDeleteFolderFail () throws UnsupportedEncodingException {
+		
+		String urlEncoded = URLEncoder.encode(String.format("%s/%s", driveFolder, "totoFolder"), "UTF-8");
+		
+	    ClientResponse responseDelete = resource().path("drive").path("delete").path("folder").path(urlEncoded)
+	    										  .delete(ClientResponse.class);
+	    
+	    assertEquals(200, responseDelete.getStatus());
+	}
+	
+	/**
+	 * Permet de supprimer le repertoire dedie aux tests dans tmp,
+	 * afin que l'execution suivante ne soit pas intereferee.
+	 * @throws Exception 
+	 */
+	@Override
+	@After
+	public void tearDown () throws Exception {
+		
+		File file = new File(driveFolder);
+		file.delete();
+		
+		super.tearDown();
 	}
 }

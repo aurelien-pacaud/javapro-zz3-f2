@@ -34,10 +34,10 @@ public class Drive {
 	  }
 	  
 	  /**
-	   * Repond a un appel en POST, et va permettre de creer un fichier
+	   * Repond a un appel POST, et va permettre de creer un nouveau fichier
 	   * dans le filesystem.
 	   * @param path : chemin + nom du fichier a creer
-	   * @return un message indiquant le succes ou l'echec de l'operation
+	   * @return un objet Response indiquant le succes ou l'echec de l'operation
 	   */
 	  @POST
 	  @Path("add/file/{filepath}")
@@ -51,6 +51,12 @@ public class Drive {
 		  return Response.status(ret ? Response.Status.OK : Response.Status.UNAUTHORIZED).build();
 	  }
 	  
+	  /**
+	   * Repond a un appel DELETE, et va permettre de supprimer un fichier
+	   * dans le filesystem.
+	   * @param filepath chemin du fichier a supprimer
+	   * @return un objet Response indiquant le succes ou l'echec de l'operation
+	   */
 	  @DELETE
 	  @Path("delete/file/{filepath}")
 	  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -60,6 +66,38 @@ public class Drive {
 		  
 		  boolean ret = f.deleteFile(filepath);
 		  
+		  return Response.status(ret ? Response.Status.OK : Response.Status.UNAUTHORIZED).build();
+	  }
+	  
+	  /**
+	   * Repond a un appel POST et permet la creation d'un nouveau repertoire
+	   * dans le systeme de fichier. 
+	   * @param folderpath Chemin du nouveau repertoire a creer
+	   * @return un objet Response indiquant le succes ou l'echec de l'operation
+	   */
+	  @POST
+	  @Path("add/folder/{folderpath}")
+	  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	  public Response createNewFolder (@PathParam("folderpath") String folderpath) {
+		  
+		  FileListerService f = new FileListerService();
+		  boolean ret = f.createFolder(folderpath);
+		  return Response.status(ret ? Response.Status.OK : Response.Status.UNAUTHORIZED).build();
+	  }
+	  
+	  /**
+	   * Repond a un appel POST et permet la suppression d'un repertoire
+	   * dans le systeme de fichier
+	   * @param folderpath chemin du repertoire a supprimer
+	   * @return un objet Response indiquant le succes ou l'echec de l'operation
+	   */
+	  @DELETE
+	  @Path("delete/folder/{folderpath}")
+	  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	  public Response deleteFolder (@PathParam("folderpath") String folderpath) {
+		  
+		  FileListerService f = new FileListerService();
+		  boolean ret = f.deleteFolder(folderpath);
 		  return Response.status(ret ? Response.Status.OK : Response.Status.UNAUTHORIZED).build();
 	  }
 	  
