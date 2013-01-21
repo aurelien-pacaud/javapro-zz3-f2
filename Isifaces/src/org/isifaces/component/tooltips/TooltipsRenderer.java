@@ -15,12 +15,14 @@ public class TooltipsRenderer extends CoreRenderer {
 	public void encodeEnd(FacesContext context, UIComponent component) throws IOException {
 		Tooltips tooltip = (Tooltips) component;
 		
+		/* Récupération de tous les enfants du body afin de les afficher. */
 		for (UIComponent c : tooltip.getParent().getChildren())
 			render(context, c);
 	}
     
     private void render(FacesContext context, UIComponent c) throws IOException {  
-    	    	
+    	
+    	/* Si le composant à des enfants, on fait un appel récursif pour les traiter. */
     	if (c.getChildCount() > 0)
     		for (UIComponent child : c.getChildren())
     			render(context, child);

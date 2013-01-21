@@ -14,6 +14,9 @@ import fr.isima.exception.NotNullBindingException;
 
 public class Injector {	
 	
+	/**
+	 * Map contenant les couples (interface, annotation, implementation)
+	 */
 	private Map<String, List<Bind>> bindings;
 	
 	public Injector() {
@@ -21,6 +24,14 @@ public class Injector {
 		bindings = new HashMap<String, List<Bind>>();		
 	}
 	
+	/**
+	 * Méthode permettant de créer une nouvelle instance d'une classe Java.
+	 * 
+	 * @param instance classe Java dont on veut une nouvelle instance injectée.
+	 * @return la nouvelle instance créée.
+	 * @throws NotNullBindingException
+	 * @throws MultipleBindException
+	 */
 	public Object newInstance(Class<?> instance) throws NotNullBindingException, MultipleBindException {
 		
 		Object obj = null;
@@ -35,18 +46,22 @@ public class Injector {
 			}
 		}
 		
+		/* Si la classe est enregistrée pour un binding. */
 		if (bindings.containsKey(instance.getName())) {
 			
+			/* Récupération des bind associés. */
 			List<Bind> binders = bindings.get(instance.getName());
 			
-			/* Pour tous les couples (interface, annotation, implementation). */
+			/* Pour tous les bind. */
 			for (Bind binder : binders) {
 				
+				/* Création de l'instance.*/
 				Object tempInstance = binder.newInstance(instance);
 				
 				if (tempInstance != null) {
 					
 					obj = tempInstance;
+					/* Injection des champs de l'instance. */
 					inject(obj);
 				}				
 			}				
@@ -54,16 +69,24 @@ public class Injector {
 		
 		if (obj == null) {
 			
-			throw new NotNullBindingException("No binding found for this instance");			
+			throw new NotNullBindingException("No binding found for this Java class.");			
 		}
 		
 		return obj;
 	}
 	
+	/**
+	 * Méthode permettant de bind une interface par une de ses implémentations.
+	 * 
+	 * @param from interface que l'on veut injecter.
+	 * @return un binding.
+	 * @throws MultipleBindException
+	 */
 	public Bind bind(Class<?> from) throws MultipleBindException {		
 		
 		Bind binder = new Bind();
 		
+		/* Si l'interface est déjà enregistrée, on ajoute un nouveau bind. */
 		if (bindings.containsKey(from.getName())) {
 			
 			bindings.get(from.getName()).add(binder);
@@ -80,7 +103,13 @@ public class Injector {
 		return binder;
 	}	
 	
-	
+	/**
+	 * Methode permettant de fixer la valeur d'un champs d'une instance donnée.
+	 * 
+	 * @param obj Valeur que l'on veut donner au champs.
+	 * @param field Champs de la classe que l'on veut injecter.
+	 * @param instance Instance de la classe dont on veut injecter le champs.
+	 */
 	private void setField(Object obj, Field field, Object instance) {
 		
 		field.setAccessible(true);
@@ -93,6 +122,14 @@ public class Injector {
 		field.setAccessible(false);	
 	}
 	
+	/**
+	 * Méthode permettant d'injecter une instance déjà existante.
+	 * 
+	 * @param obj Objet que l'on veut injecter.
+	 * @return L'object injecté.
+	 * @throws NotNullBindingException
+	 * @throws MultipleBindException
+	 */
 	public Object inject(Object obj) throws NotNullBindingException, MultipleBindException {
 			
 		/* Recuperation des attributs de notre objet passe en parametre. */
@@ -119,6 +156,7 @@ public class Injector {
 						
 						boolean applicable = binder.apply(field);
 						
+						/* Si le champ peut être injecté et qu'il ne l'a pas déjà été. */
 						if (applicable == true && change == false) {
 	
 							setField(obj, field, binder.value());	
@@ -127,7 +165,7 @@ public class Injector {
 						}
 						else if (applicable == true && change == true){
 							
-							throw new MultipleBindException("test");
+							throw new MultipleBindException("Multiple bind detected.");
 						}
 					}				
 				}
