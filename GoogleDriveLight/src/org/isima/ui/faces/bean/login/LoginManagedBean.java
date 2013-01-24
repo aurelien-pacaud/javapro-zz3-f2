@@ -28,6 +28,7 @@ public class LoginManagedBean implements Serializable  {
 	@PostConstruct
 	public void init() {
 		
+		/* Après la création du bean on inject ses attributs annotés. */
 		Injector injector = GoogleDriveLightInjector.getInstance();		
 		
 		try {
@@ -61,6 +62,7 @@ public class LoginManagedBean implements Serializable  {
 	
 	public String logout() {
 		
+		/* L'utilisateur est déconnecté. */
 		connected = false;
 		return "logoutSuccess";
 	}

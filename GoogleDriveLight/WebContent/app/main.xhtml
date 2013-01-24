@@ -15,7 +15,7 @@
     		<ui:define name="content">
     		
     			<!-- Barre de recherche du drive -->
-				<h:form styleClass="search">  
+				<h:form styleClass="search" id="searchBar">  
 					<h:graphicImage value="/resources/images/logo_128.png" styleClass="logo" alt="logo" /> 	    							
 					<div id="searchInput">
 						<p:inputText value="#{driveManagedBean.pattern}" id="searchid" size="35"/>
@@ -23,7 +23,7 @@
 						
 						<p:commandButton value="#{msg['search']}" 
 										 icon="ui-icon-search" 
-										 action="#{driveManagedBean.search}" 
+										 actionListener="#{driveManagedBean.search}" 
 										 update=":formTable :formTree :formBreadCrumb :formToolbar :formDetails" />	
 					</div> 
 					<div class="clear" />

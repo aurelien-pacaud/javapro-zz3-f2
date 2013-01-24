@@ -27,14 +27,14 @@
 					<h:outputLabel value="#{msg['login']}" for="username"/>
 					<p:inputText id="username"
 							 	 value="#{loginManagedBean.username}" required="true"
-							 	 label="Username" title="Enter your login"/>
+							 	 label="Username" title="#{msg['tooltipLogin']}"/>
 			    
 			    	<p:message for="password" />
 	
 					<h:outputLabel value="#{msg['password']}" for="password"/>
 					<p:password id="password"
 								value="#{loginManagedBean.password}" required="true"
-								label="Password" title="Enter your password"/>
+								label="Password" title="#{msg['tooltipPasswd']}"/>
 				
 				</h:panelGrid>
 				<p:commandButton value="Login" action="#{loginManagedBean.login}" update="@form" title="Submit the form"/>

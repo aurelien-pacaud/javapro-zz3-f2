@@ -11,8 +11,8 @@
 	<h:body>
 		<ui:composition>  
 			<p:menuitem value="#{msg['textFile']}" oncomplete="dlgNewTxtFile.show()" icon="ui-icon-document"/>
-	        <p:menuitem value="#{msg['presentationFile']}" icon="ui-icon-contact"/>
-	        <p:menuitem value="#{msg['drawFile']}" icon="ui-icon-image"/>
+	        <!-- <p:menuitem value="#{msg['presentationFile']}" icon="ui-icon-contact" disabled="true"/>
+	        <p:menuitem value="#{msg['drawFile']}" icon="ui-icon-image" disabled="true"/> -->
 	        <p:separator /> 
 	        <p:menuitem value="#{msg['directory']}" icon="ui-icon-folder-collapsed" oncomplete="dlgNewDir.show()"/>
 	    </ui:composition>

@@ -69,15 +69,20 @@ public class FileNode extends DefaultTreeNode {
         fileNode = null;
 	}
 		
+	/**
+	 * Fonction permettant de redéfinir quel noeud sont des feuilles.
+	 */
 	@Override
 	public boolean isLeaf() {
 		
 		boolean isLeaf = true;
 		
+		/* Pour tous les fils du noeud. */
 		for (TreeNode node : getChildren()) {
 			
 			FileInfos file = (FileInfos) node.getData();
 			
+			/* Si le noeud est un répertoire, ce n'est pas une feuille. */
 			if (file.isDirectory()) {
 				isLeaf = false;
 				break;

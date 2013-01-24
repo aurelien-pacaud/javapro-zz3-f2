@@ -30,6 +30,7 @@ public class LoginFilter implements Filter {
     
         LoginManagedBean user = (LoginManagedBean) session.getAttribute("loginManagedBean");
         
+        /* Si l'utilisateur est connecté on autorise l'accès aux applications. */
         if (user != null && user.isConnected()) {
         	chain.doFilter(request, response);
         }
