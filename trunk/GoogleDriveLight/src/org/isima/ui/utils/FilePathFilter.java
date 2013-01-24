@@ -3,6 +3,9 @@ package org.isima.ui.utils;
 import java.io.File;
 import java.io.FileFilter;
 
+/**
+ * Filtre permettant de vérifier l'équalité de deux path de fichiers.
+ */
 public class FilePathFilter implements FileFilter {
 
 	private String path;

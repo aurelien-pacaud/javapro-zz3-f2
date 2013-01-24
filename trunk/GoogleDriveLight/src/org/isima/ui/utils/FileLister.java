@@ -48,6 +48,12 @@ public class FileLister {
 	}
 	
 
+	/**
+	 * Permet de construire une sous arborescence et de l'attache au noeud passé en paramètre.
+	 * 
+	 * @param path Chemin vers l'arbre que l'on veut obtenir.
+	 * @param parentNode Noeud parent.
+	 */
 	private static void buildTree(String path, FileNode parentNode) {	
 		
 		List<FileNode> filesInfosList = FileLister.getFiles(path, parentNode);

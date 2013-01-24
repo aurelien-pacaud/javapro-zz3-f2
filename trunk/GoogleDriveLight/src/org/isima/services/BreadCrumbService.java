@@ -9,16 +9,26 @@ import org.primefaces.model.MenuModel;
 
 public class BreadCrumbService {
 
+	/**
+	 * Méthode permettant d'afficher l'arborescence dans le breadCrumb.
+	 * 
+	 * @param driveManagedBean instance du driveManagedBean courant
+	 * @param selectedNode Noeud sélectionné.
+	 * @return menumodel associé au noeud sélectionné.
+	 */
 	public MenuModel breadCrumbFromNode(DriveManagedBean driveManagedBean, FileNode selectedNode) {
 		
 		MenuModel breadCrum = new DefaultMenuModel();
 		
+		/* Si le noeud courant n'est pas null. */
 		if (selectedNode != null) {
 		
 			FileNode currentNode = selectedNode;
 			
+			/* Pour tous les noeuds jusqu'au root. */
 			while (currentNode.getParent() != null) {
 				
+				/* Création d'un item associé. */
 				MenuItem menuItem = new MenuItem();
 				
 				menuItem.setValue(((FileInfos)currentNode.getData()).getName());

@@ -33,13 +33,14 @@ public class ServletContextListenerImpl implements ServletContextListener {
 			
 		try {
            
-			/* TODO A modifier! Version de test uniquement. */
+			/* TODO A modifier! Création d'un répertoire temporaire pour le drive de l'user. */
 			String folder = String.format("%s/%s", System.getProperty("java.io.tmpdir"), "Drive");
 			File file = new File(folder);
 			
 			if (!file.exists())
 				file.mkdir();
 			
+			/* Création des régles de bind pour l'injection des services. */
 			injector.bind(IFileService.class).to(FileListerService.class);
 			injector.bind(ILoginService.class).to(MockLoginService.class);
 			injector.bind(String.class).annotatedWith(InjectedValue.class).to(folder);

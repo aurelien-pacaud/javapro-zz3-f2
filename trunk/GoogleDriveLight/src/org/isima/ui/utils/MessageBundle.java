@@ -8,16 +8,16 @@ import javax.faces.context.FacesContext;
 
 /***
  * 
- * Classe permettant de récupérer les messages disponibles dans le bundle pour l'i18. *
+ * Classe permettant de récupérer les messages disponibles dans le bundle pour l'i18n. *
  * 
  */
 public class MessageBundle {
 
 	/***
-	 * Permet d'obtenir un message pour l'i18 depuis sa clé.
+	 * Permet d'obtenir un message pour l'i18n depuis sa clé.
 	 * 
 	 * @param key clé dont nous voulons la valeur associée
-	 * @return Message associé à la clé passée en paramètre depuis les fichiers d'i18.
+	 * @return Message associé à la clé passée en paramètre depuis les fichiers d'i18n.
 	 */
 	public static String getMessage(String key) {
 		
@@ -30,6 +30,12 @@ public class MessageBundle {
 		return bundle.getString(key);
 	}
 	
+	/**
+	 * Méthode permettant d'afficher un message d'information.
+	 * 
+	 * @param content Message a afficher en information
+	 * @return le message a afficher.
+	 */
 	public static FacesMessage displayInformationMsg(String content) {
 		
 		FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, MessageBundle.getMessage("successful"), content);
@@ -38,6 +44,12 @@ public class MessageBundle {
 		return msg;
 	}
 	
+	/**
+	 * Méthode permettant d'afficher un message d'erreur.
+	 * 
+	 * @param content Message a afficher en erreur.
+	 * @return le message a afficher.
+	 */
 	public static FacesMessage displayErrorMsg(String content) {
 		
 		FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, MessageBundle.getMessage("error"), content);

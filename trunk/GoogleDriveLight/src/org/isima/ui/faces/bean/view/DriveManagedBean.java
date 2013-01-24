@@ -59,6 +59,7 @@ public class DriveManagedBean implements Serializable, ActionListener {
 	@PostConstruct
 	public void init() {
 	
+		/* Injection des services. */
 		Injector injector = GoogleDriveLightInjector.getInstance();		
 		
 		try {
@@ -69,9 +70,11 @@ public class DriveManagedBean implements Serializable, ActionListener {
 			e.printStackTrace();
 		}		
 		
+		/* Récupération du drive de l'utilisateur. */
 		model = new FileNode(new FileInfos(""), null);
 		fileService.getTree(userHome).setParent(model);	
-				
+		
+		/* Le noeud root est sélectionné par défaut. */
 		setSelectedNode(model.getChildren().get(0));
 	}
 	
@@ -79,17 +82,7 @@ public class DriveManagedBean implements Serializable, ActionListener {
 		
 		return model;
 	}
-	
-	public TreeNode getSelectedNode() {
 		
-		return selectedNode;
-	}
-	
-	public List<TreeNode> getDirContent() {
-		
-		return dirContent;
-	}
-	
 	public void search() {
 		
 		dirContent = model.search(new WildcardFileFilter(pattern)); 
@@ -118,11 +111,17 @@ public class DriveManagedBean implements Serializable, ActionListener {
 		setSelectedNode((FileNode)event.getTreeNode());
     } 
 	
+	/**
+	 * Méthode permettant la gestion du click d'un fichier/dossier dans la table centrale.
+	 * 
+	 * @param event event associé au click d'une ligne sur la table de fichier.
+	 */
 	public void onRowSelect(SelectEvent event) {  
         
 		FileNode node = (FileNode)event.getObject();
 		FileInfos file = (FileInfos)selectedFile.getData();
 		
+		/* Si le fichier est un répertoire, on rentre dedans. */
 		if (file.isDirectory()) {
 			
 			if (selectedNode != null)
@@ -131,34 +130,7 @@ public class DriveManagedBean implements Serializable, ActionListener {
 			setSelectedNode(node);
 			selectedFile = null;			
 		}
-    }
-	
-	public void setSelectedFile(TreeNode selectedFile) {
-		this.selectedFile = selectedFile;		
-		pattern = null;
-	}
-	
-	public TreeNode getSelectedFile() {
-		return selectedFile;
-	}
-	
-	public String getFilename() {
-		return filename;
-	}
-	
-	public void setFilename(String filename) {
-		this.filename = filename;
-	}
-	
-	public void setDirname(String dirname)
-	{
-		this.dirname = dirname;
-	}
-	
-	public String getDirname() {
-		return dirname;
-	}
-	
+    }	
 	
 	/**
 	 * Permet la suppression d'un fichier depuis l'interface du Drive
@@ -243,31 +215,19 @@ public class DriveManagedBean implements Serializable, ActionListener {
 			MessageBundle.displayErrorMsg(MessageBundle.getMessage("folderNotCreated"));			
 	}
 
-	public String getPattern() {
-		return pattern;
-	}
-
-	public void setPattern(String pattern) {
-		
-		this.pattern = pattern;
-		
-		/* Suppression des informations enregistrées pour avoir un affichage neutre. */
-		selectedNode.setSelected(false);
-		
-		selectedFile = null;
-		selectedNode = null;		
-	}
-
+	/* Méthode permettant de récupérer le fil d'arianne. */
 	public MenuModel getBreadCrumb() {		
 		
 		return new BreadCrumbService().breadCrumbFromNode(this, (FileNode)selectedNode);
 	}
 	
+	/* Méthode appelée lors de l'upload d'un fichier. */
 	public void handleFileUpload(FileUploadEvent event) {
 		
 		String currentDirectory = ((FileInfos) selectedNode.getData()).getPath();
 		String path = String.format("%s/%s", currentDirectory, event.getFile().getFileName());
-					
+		
+		/* Si la copie du fichier a eu lieu. */
 		if (fileService.copyFile(event.getFile(), path)) {
 
 			((FileNode) selectedNode).appendChild(new FileInfos(path));
@@ -279,18 +239,76 @@ public class DriveManagedBean implements Serializable, ActionListener {
 		}		
 	}
 
+	/**
+	 * Méthode permettant de traiter le click sur un item du breadCrumb.
+	 */
 	@Override
 	public void processAction(ActionEvent event) throws AbortProcessingException {
 		
+		/* Si un menuItem a été clické. */
 		if(event.getSource().getClass() == MenuItem.class) {
 			
             MenuItem sourceItem = (MenuItem) event.getSource();
             
             FileNode node = (FileNode) sourceItem.getAttributes().get("node");
             
+            /* On change le noeud courant. */
             selectedNode.setSelected(false);
 			setSelectedNode(node);
 			selectedFile = null;
        }		
+	}	
+
+	public String getPattern() {
+		return pattern;
+	}
+
+	public void setPattern(String pattern) {
+		
+		this.pattern = pattern;
+		
+		if (selectedNode != null) {
+			/* Suppression des informations enregistrées pour avoir un affichage neutre. */
+			selectedNode.setSelected(false);
+		
+			selectedFile = null;
+			selectedNode = null;
+		}
+	}
+	
+	public void setSelectedFile(TreeNode selectedFile) {
+		this.selectedFile = selectedFile;		
+		pattern = null;
+	}
+	
+	public TreeNode getSelectedFile() {
+		return selectedFile;
+	}
+	
+	public String getFilename() {
+		return filename;
+	}
+	
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
+	
+	public void setDirname(String dirname)
+	{
+		this.dirname = dirname;
+	}
+	
+	public String getDirname() {
+		return dirname;
+	}
+	
+	public TreeNode getSelectedNode() {
+		
+		return selectedNode;
+	}
+	
+	public List<TreeNode> getDirContent() {
+		
+		return dirContent;
 	}
 }
