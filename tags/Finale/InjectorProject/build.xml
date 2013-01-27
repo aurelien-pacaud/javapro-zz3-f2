@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="cobertura.examples.basic" default="coverage" basedir=".">
+
+  <property file="build.properties" />
+
+  <path id="cobertura.classpath">
+          
+    <fileset dir="${cobertura.dir}">
+      <include name="cobertura.jar" />
+      <include name="lib/**/*.jar" />
+    </fileset>
+
+  </path>
+
+  <path id="classpath">
+	  
+    <fileset dir="${junit.hamcrest.lib}">
+      <include name="**/junit4.jar" />
+      <include name="**/org.hamcrest.*.jar" />
+    </fileset>
+
+    <fileset dir="${jar.speedoflight.dir}">
+      <include name="**/*" />
+    </fileset>
+            
+    <fileset dir="${speedoflight}/lib">
+      <include name="*.jar"/>
+    </fileset>
+
+  </path>
+
+  <taskdef classpathref="cobertura.classpath" resource="tasks.properties"/>
+
+  <target name="init">
+    <mkdir dir="${instrumented.speedoflight.dir}" />
+    <mkdir dir="${reports.xml.dir}" />
+    <mkdir dir="${coverage.html.dir}" />
+  </target>
+
+  <target name="compile" depends="init">
+    <ant antfile="${speedoflighttest}/build.xml" inheritAll="false">
+      <property name="junit.hamcrest.lib" value="${junit.hamcrest.lib}" />
+    </ant>
+  </target>
+
+  <target name="instrument" depends="init,compile">
+              
+    <delete file="cobertura.ser"/>
+		
+    <cobertura-instrument todir="${instrumented.speedoflight.dir}">
+      <ignore regex="org.apache.log4j.*" />
+
+      <fileset dir="${classes.speedoflight.dir}">
+        <include name="**/*.class" />
+      </fileset>
+    </cobertura-instrument>
+	
+  </target>
+
+  <target name="test">
+    <junit fork="yes" failureProperty="test.failed" printsummary="yes">
+			
+      <classpath location="${instrumented.speedoflight.dir}" />
+      <classpath location="${classes.speedoflight.dir}" />
+      
+      <classpath location="${speedoflighttest}/resources" />
+      <classpath location="${classes.speedoflighttest.dir}" />
+      
+      <classpath refid="cobertura.classpath" />
+      <classpath refid="classpath" />
+
+
+      <formatter type="xml" />
+      <test name="${testcase}" todir="${reports.xml.dir}" if="testcase" />
+        <batchtest todir="${reports.xml.dir}" unless="testcase">
+	  <fileset dir="${src.speedoflighttest.dir}">
+	    <include name="**/*Test.java" />
+	  </fileset>
+	</batchtest>
+    
+    </junit>
+
+    <junitreport todir="${reports.xml.dir}">
+      <fileset dir="${reports.xml.dir}">
+        <include name="TEST-*.xml" />
+      </fileset>
+      <report format="frames" todir="${reports.html.dir}" />
+    </junitreport>
+  
+  </target>
+
+  <target name="coverage-check">
+    <cobertura-check branchrate="34" totallinerate="100" />
+  </target>
+
+  <target name="alternate-coverage-report">
+    
+    <cobertura-report destdir="${coverage.html.dir}">
+      <fileset dir="${src.speedoflight.dir}">
+        <include name="**/*.java"/>
+      </fileset>
+    </cobertura-report>
+  
+  </target>
+
+  <target name="clean" description="Remove all files created by the build/test process.">
+    <ant antfile="${speedoflighttest}/build.xml" inheritAll="false" target="clean" />
+    <ant antfile="${speedoflight}/build.xml" inheritAll="false" target="clean" />
+    <delete dir="${reports.dir}" />
+    <delete file="cobertura.log" />
+    <delete file="cobertura.ser" />
+  </target>
+
+  <target name="coverage" depends="compile,instrument,test,alternate-coverage-report" description="Compile, instrument ourself, run the tests and generate JUnit and coverage reports."/>
+
+</project>

@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:cc="http://java.sun.com/jsf/composite"
+	xmlns:i="http://isifaces.org/ui">
+	
+	<h:head>
+		<title>Google Drive Light -- Login page</title>
+	</h:head>
+	<h:body>			
+		<i:tooltips/>
+		<h:form id="loginForm">
+		
+			<p:dialog header="GoogleDrive" visible="true" resizable="false" draggable="false" closable="false" modal="true">
+				
+				<h:panelGrid columns="1">	    		
+				
+					<p:messages globalOnly="true" showDetail="true" showSummary="false"/>
+		    
+			    	<p:message for="username" />
+			    	
+					<h:outputLabel value="#{msg['login']}" for="username"/>
+					<p:inputText id="username"
+							 	 value="#{loginManagedBean.username}" required="true"
+							 	 label="Username" title="#{msg['tooltipLogin']}"/>
+			    
+			    	<p:message for="password" />
+	
+					<h:outputLabel value="#{msg['password']}" for="password"/>
+					<p:password id="password"
+								value="#{loginManagedBean.password}" required="true"
+								label="Password" title="#{msg['tooltipPasswd']}"/>
+				
+				</h:panelGrid>
+				<p:commandButton value="Login" action="#{loginManagedBean.login}" update="@form" title="Submit the form"/>
+			</p:dialog>
+		</h:form>
+	</h:body>
+</html>
